@@ -1,0 +1,23 @@
+{
+  "name": "untitled",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@primevue/themes": "^4.2.4",
+    "lodash.clonedeep": "^4.5.0",
+    "primevue": "^4.2.4",
+    "v-mask": "^2.3.0",
+    "vue": "^3.5.12",
+    "vue-the-mask": "^0.11.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.1.4",
+    "vite": "^5.4.10"
+  }
+}

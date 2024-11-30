@@ -1,0 +1,150 @@
+:root {
+	--primary-color: #f0ffe0;
+	--dark-color: #151616;
+}
+
+::-webkit-scrollbar {
+	width: 10px;
+}
+::-webkit-scrollbar-track {
+	background: rgba(200, 200, 200, 0.1);
+}
+::-webkit-scrollbar-track:hover {
+	background: rgba(200, 200, 200, 0.4);
+}
+::-webkit-scrollbar-thumb {
+	border-radius: 10px;
+	background-color: rgba(200, 200, 200, 0.4);
+}
+::-webkit-scrollbar-thumb:hover {
+	background-color: rgba(200, 200, 200, 0.7);
+}
+
+a {
+	color: inherit;
+}
+
+a:hover {
+	color: #f0ffe0;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+	min-height: 100vh;
+}
+
+.page-wrapper {
+	min-height: 100vh;
+	background-color: var(--primary-color);
+	display: flex;
+	flex-direction: column;
+}
+
+.brand-logo {
+	border-radius: 50%;
+	height: 75px;
+}
+
+@media only screen and (max-width: 550px) {
+	.brand-logo {
+		height: 60px;
+	}
+}
+
+main {
+	flex-grow: 1;
+}
+
+.card-footer {
+	color: gold;
+}
+
+.loader-wrapper {
+	width: 100%;
+	text-align: center;
+}
+
+.lds-ellipsis,
+.lds-ellipsis div {
+	box-sizing: border-box;
+}
+.lds-ellipsis {
+	display: inline-block;
+	position: relative;
+	width: 80px;
+	height: 80px;
+}
+.lds-ellipsis div {
+	position: absolute;
+	top: 33.33333px;
+	width: 13.33333px;
+	height: 13.33333px;
+	border-radius: 50%;
+	background: currentColor;
+	animation-timing-function: cubic-bezier(0, 1, 1, 0);
+}
+.lds-ellipsis div:nth-child(1) {
+	left: 8px;
+	animation: lds-ellipsis1 0.6s infinite;
+}
+.lds-ellipsis div:nth-child(2) {
+	left: 8px;
+	animation: lds-ellipsis2 0.6s infinite;
+}
+.lds-ellipsis div:nth-child(3) {
+	left: 32px;
+	animation: lds-ellipsis2 0.6s infinite;
+}
+.lds-ellipsis div:nth-child(4) {
+	left: 56px;
+	animation: lds-ellipsis3 0.6s infinite;
+}
+@keyframes lds-ellipsis1 {
+	0% {
+		transform: scale(0);
+	}
+	100% {
+		transform: scale(1);
+	}
+}
+@keyframes lds-ellipsis3 {
+	0% {
+		transform: scale(1);
+	}
+	100% {
+		transform: scale(0);
+	}
+}
+@keyframes lds-ellipsis2 {
+	0% {
+		transform: translate(0, 0);
+	}
+	100% {
+		transform: translate(24px, 0);
+	}
+}
+.btn-responsive {
+	display: flex;
+	justify-content:center;
+  gap: 20px;
+}
+
+.btn-responsive button {
+  max-width: 15%;
+}
+
+@media (max-width: 768px) {
+	.btn-responsive {
+		flex-direction: column;
+		gap: 10px;
+	}
+
+	.btn-responsive button {
+		margin: 0;
+	}
+	.btn-responsive button {
+		width: 100%;
+    max-width: 100%;
+	}
+}
