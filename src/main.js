@@ -1,5 +1,17 @@
 import { createApp } from "vue";
-import App from "./pages/register.vue";
-import "./styles/vue.css";
+import App from "./App.vue";
+import PrimeVue from "primevue/config";
+import CustomHeader from "./components/CustomHeader.vue";
+	
+const app = createApp(App);
 
-createApp(App).mount("#register");
+app.use(PrimeVue, {
+	theme: {
+		preset: "Nora",
+	},
+});
+
+app.component("CustomHeader", CustomHeader);
+
+app.mount("#app");
+export default app;
