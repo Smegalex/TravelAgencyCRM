@@ -11,6 +11,7 @@
   "dependencies": {
     "@primevue/themes": "^4.2.4",
     "lodash.clonedeep": "^4.5.0",
+    "primeicons": "^7.0.0",
     "primevue": "^4.2.4",
     "v-mask": "^2.3.0",
     "vue": "^3.5.12",
@@ -18,6 +19,6 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.1.4",
-    "vite": "^5.4.10"
+    "vite": "^5.4.11"
   }
 }

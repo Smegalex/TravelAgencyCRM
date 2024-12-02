@@ -1,11 +1,12 @@
-<script setup>
-import CustomHeader from "@/components/CustomHeader.vue";
-</script>
 <template>
 	<div id="page-wrapper">
 		<!-- Header -->
 		<header>
 			<CustomHeader active-page="home" />
+      <AuthorizationModal
+      :visible.sync="showAuthorizationModal"
+      activePage="home"
+    />
 		</header>
 		<!-- Main Content -->
 		<main>
@@ -164,79 +165,14 @@ import CustomHeader from "@/components/CustomHeader.vue";
 		</main>
 
 		<!-- Footer -->
-		<footer class="bg-dark text-center text-light p-3">
-			<p>&copy; 2024 Tunik & Shvets co.</p>
-			<div class="footer-icons">
-				<a href="tel:+123456789" class="mr-3"
-					><i class="fas fa-phone"></i
-				></a>
-				<a href="mailto:r.shvetsss@gmail.com" class="mr-3"
-					><i class="fas fa-envelope"></i
-				></a>
-				<a href="https://t.me/tearsalloverthefloor" class="mr-3"
-					><i class="fab fa-telegram"></i
-				></a>
-				<a href="https://wa.me/380670123456" class="mr-3"
-					><i class="fab fa-whatsapp"></i
-				></a>
-			</div>
+		<footer>
+	<CustomFooter active-page="home" />
 		</footer>
 	</div>
 
 	<!-- Модальні вікна -->
 
-	<!-- Модальне вікно Авторизації -->
-	<div
-		class="modal fade"
-		id="loginModal"
-		tabindex="-1"
-		role="dialog"
-		aria-labelledby="loginModalTitle"
-		aria-hidden="true"
-	>
-		<div class="modal-dialog" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="loginModalTitle">
-						Форма Авторизації
-					</h5>
-					<button
-						type="button"
-						class="close"
-						data-dismiss="modal"
-						aria-label="Close"
-					>
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body">
-					<form>
-						<div class="form-group">
-							<label for="emailLogin">Email</label>
-							<input
-								type="email"
-								class="form-control"
-								id="emailLogin"
-								placeholder="Enter email"
-							/>
-						</div>
-						<div class="form-group">
-							<label for="passwordLogin">Password</label>
-							<input
-								type="password"
-								class="form-control"
-								id="passwordLogin"
-								placeholder="Password"
-							/>
-						</div>
-						<button type="submit" class="btn btn-primary">
-							Login
-						</button>
-					</form>
-				</div>
-			</div>
-		</div>
-	</div>
+	<!-- Ваш компонент модального вікна -->
 
 	<!-- Модальне вікно FAQ -->
 	<div
@@ -276,3 +212,22 @@ import CustomHeader from "@/components/CustomHeader.vue";
 		</div>
 	</div>
 </template>
+<script>
+import { ref } from "vue";
+import CustomHeader from "@/components/CustomHeader.vue";
+import CustomFooter from "@/components/CustomFooter.vue";
+import AuthorizationModal from "@/components/AuthorizationModal.vue";
+
+export default {
+  components: {
+    CustomHeader,
+    CustomFooter,
+    AuthorizationModal,
+  },
+  setup() {
+    const showAuthorizationModal = ref(false); // Керування видимістю модального вікна
+
+    return { showAuthorizationModal };
+  },
+};
+</script>
