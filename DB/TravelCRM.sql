@@ -2,7 +2,7 @@ create table Managers(
 ID number(4) GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 Name varchar2(255) NOT NULL,
 Surname varchar2(255),
-Email varchar2(50) NOT NULL,
+Email varchar2(50) NOT NULL UNIQUE,
 AdminRights char(1)
 );
 
@@ -10,7 +10,7 @@ create table Clients(
 ID number(4) GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 Name varchar2(255) NOT NULL,
 Surname varchar2(255),
-Email varchar2(50) NOT NULL 
+Email varchar2(50) NOT NULL UNIQUE
 );
 
 
