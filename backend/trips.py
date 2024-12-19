@@ -3,18 +3,23 @@ from db_cursor import select_records, insert_new_record, get_last_id, update_row
 
 table_name = "trips"
 
+
 def get_trip_from_DB(trip_id=None):
     return select_records(table_name, trip_id)
 
+
 trips_bp = Blueprint('trips', __name__)
+
 
 @trips_bp.route('/trips', methods=['GET'])
 def get_trips():
     return jsonify(get_trip_from_DB())
 
+
 @trips_bp.route('/trips/<int:trip_id>', methods=['GET'])
 def get_trip(trip_id):
     return jsonify(get_trip_from_DB(trip_id))
+
 
 @trips_bp.route('/trips', methods=['POST'])
 def add_trip():
@@ -28,6 +33,7 @@ def add_trip():
     created_trip = get_trip_from_DB(get_last_id(table_name))[0]
     return jsonify(created_trip), 201
 
+
 @trips_bp.route('/trips/<int:trip_id>', methods=['PUT'])
 def update_trip(trip_id):
     trip_data = request.json
@@ -36,8 +42,10 @@ def update_trip(trip_id):
     print(trip)
     if not trip:
         return jsonify({"error": "trip not found"}), 404
-    update_row_in_table(table_name, trip_id, {"name": trip_data["name"], "idplace": trip_data["idplace"]})
+    update_row_in_table(table_name, trip_id, {
+                        "name": trip_data["name"], "idplace": trip_data["idplace"]})
     return jsonify(get_trip_from_DB(trip_id))
+
 
 @trips_bp.route('/trips/<int:trip_id>', methods=['DELETE'])
 def delete_trip(trip_id):
