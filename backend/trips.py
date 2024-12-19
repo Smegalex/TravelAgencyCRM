@@ -1,7 +1,6 @@
 from flask import Blueprint, jsonify, request
 from db_cursor import select_records, insert_new_record, get_last_id, update_row_in_table, delete_row_from_table
 
-#ID, NAME, IDPLACE
 table_name = "trips"
 
 def get_trip_from_DB(trip_id=None):
