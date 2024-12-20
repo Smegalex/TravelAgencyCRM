@@ -1,252 +1,234 @@
-<script setup>
+<script>
 import CustomHeader from "@/components/CustomHeader.vue";
-</script>
+import CustomFooter from "@/components/CustomFooter.vue";
+import DataTable from "primevue/datatable";
+import Column from "primevue/column";
+import Button from "primevue/button";
+import { Form } from "@primevue/forms";
+import { ref, onMounted } from "vue";
+import * as Yup from "yup";
+import { yupResolver } from "@primevue/forms/resolvers/yup";
 
+export default {
+	name: "ClientsTable",
+	setup() {
+		const clients = ref([]);
+		const showCreateClientForm = ref(false);
+		const newClient = ref({ name: "", surname: null, email: "" });
+		// const createCustomerFormRules = {
+		// 	name: required(),
+		// 	email: [required(), email()],
+		// };
+		const createClientFormErrors = ref({
+			name: null,
+			email: null,
+		});
+
+		const createClientFormSchema = Yup.object().shape({
+			name: Yup.string().required("Name is required."),
+			surname: Yup.string(),
+			email: Yup.string()
+				.email("Invalid email format")
+				.required("Email is required."),
+		});
+
+		const fetchClients = async () => {
+			try {
+				const response = await fetch("http://127.0.0.1:5000/clients");
+				clients.value = await response.json(); // Зберігаємо відповідь у реактивну змінну
+				console.log(clients.value);
+			} catch (error) {
+				console.error("Error fetching clients:", error);
+			}
+		};
+		const deleteClient = async (id) => {
+			try {
+				await fetch(`http://127.0.0.1:5000/clients/${id}`, {
+					method: "DELETE",
+				});
+				clients.value = clients.value.filter(
+					(client) => client.id !== id
+				); // Update local list
+			} catch (error) {
+				console.error("Error deleting client:", error);
+			}
+		};
+
+		const addClient = async () => {
+			try {
+				const response = await fetch("http://127.0.0.1:5000/clients", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify(newClient.value),
+				});
+				const addedClient = await response.json();
+				clients.value.push(addedClient); // Add new student to local list
+				newClient.value = { name: "", surname: null, email: "" }; // Reset form fields
+				showCreateClientForm.value = false;
+			} catch (error) {
+				console.error("Error adding trip:", error);
+			}
+		};
+		onMounted(() => {
+			fetchClients();
+		});
+
+		return {
+			clients,
+			deleteClient,
+			showCreateClientForm,
+			newClient,
+			addClient,
+			createClientFormErrors,
+			createClientFormRules,
+		};
+	},
+};
+</script>
 <template>
-	<div id="page-wrapper">
+	<div id="page-wrapper" style="overflow-y: scroll; height: 100vh">
 		<!-- Header -->
 		<header>
 			<CustomHeader active-page="clients" />
 		</header>
 		<main>
-			<div class="container mt-5">
-				<h2 class="mb-4">Destinations Management</h2>
-				<div class="table-container">
-					<table class="table table-striped table-bordered">
-						<thead class="table-dark">
-							<tr>
-								<th>#</th>
-								<th>Destination</th>
-								<th>Country</th>
-								<th>Price</th>
-								<th>Actions</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td>1</td>
-								<td>Paris</td>
-								<td>France</td>
-								<td>$1500</td>
-								<td>
-									<div class="btn-group btn-responsive">
-										<button
-											class="btn btn-outline-primary btn-sm"
-										>
-											<i class="fas fa-eye"></i>
-										</button>
-										<button
-											class="btn btn-outline-warning btn-sm"
-										>
-											<i class="fas fa-edit"></i>
-										</button>
-										<button
-											class="btn btn-outline-danger btn-sm"
-										>
-											<i class="fas fa-trash"></i>
-										</button>
-									</div>
-								</td>
-							</tr>
-							<tr>
-								<td>2</td>
-								<td>Tokyo</td>
-								<td>Japan</td>
-								<td>$1800</td>
-								<td>
-									<div class="btn-group btn-responsive">
-										<button
-											class="btn btn-outline-primary btn-sm"
-										>
-											<i class="fas fa-eye"></i>
-										</button>
-										<button
-											class="btn btn-outline-warning btn-sm"
-										>
-											<i class="fas fa-edit"></i>
-										</button>
-										<button
-											class="btn btn-outline-danger btn-sm"
-										>
-											<i class="fas fa-trash"></i>
-										</button>
-									</div>
-								</td>
-							</tr>
-
-							<tr>
-								<td>3</td>
-								<td>Sydney</td>
-								<td>Australia</td>
-								<td>$2000</td>
-								<td>
-									<div class="btn-group btn-responsive">
-										<button
-											class="btn btn-outline-primary btn-sm"
-										>
-											<i class="fas fa-eye"></i>
-										</button>
-										<button
-											class="btn btn-outline-warning btn-sm"
-										>
-											<i class="fas fa-edit"></i>
-										</button>
-										<button
-											class="btn btn-outline-danger btn-sm"
-										>
-											<i class="fas fa-trash"></i>
-										</button>
-									</div>
-								</td>
-							</tr>
-							<tr>
-								<td>4</td>
-								<td>New York</td>
-								<td>USA</td>
-								<td>$2500</td>
-								<td>
-									<div class="btn-group btn-responsive">
-										<button
-											class="btn btn-outline-primary btn-sm"
-										>
-											<i class="fas fa-eye"></i>
-										</button>
-										<button
-											class="btn btn-outline-warning btn-sm"
-										>
-											<i class="fas fa-edit"></i>
-										</button>
-										<button
-											class="btn btn-outline-danger btn-sm"
-										>
-											<i class="fas fa-trash"></i>
-										</button>
-									</div>
-								</td>
-							</tr>
-							<tr>
-								<td>5</td>
-								<td>London</td>
-								<td>UK</td>
-								<td>$2200</td>
-								<td>
-									<div class="btn-group btn-responsive">
-										<button
-											class="btn btn-outline-primary btn-sm"
-										>
-											<i class="fas fa-eye"></i>
-										</button>
-										<button
-											class="btn btn-outline-warning btn-sm"
-										>
-											<i class="fas fa-edit"></i>
-										</button>
-										<button
-											class="btn btn-outline-danger btn-sm"
-										>
-											<i class="fas fa-trash"></i>
-										</button>
-									</div>
-								</td>
-							</tr>
-							<tr>
-								<td>6</td>
-								<td>Rome</td>
-								<td>Italy</td>
-								<td>$1700</td>
-								<td>
-									<div class="btn-group btn-responsive">
-										<button
-											class="btn btn-outline-primary btn-sm"
-										>
-											<i class="fas fa-eye"></i>
-										</button>
-										<button
-											class="btn btn-outline-warning btn-sm"
-										>
-											<i class="fas fa-edit"></i>
-										</button>
-										<button
-											class="btn btn-outline-danger btn-sm"
-										>
-											<i class="fas fa-trash"></i>
-										</button>
-									</div>
-								</td>
-							</tr>
-							<tr>
-								<td>7</td>
-								<td>Dubai</td>
-								<td>UAE</td>
-								<td>$3000</td>
-								<td>
-									<div class="btn-group btn-responsive">
-										<button
-											class="btn btn-outline-primary btn-sm"
-										>
-											<i class="fas fa-eye"></i>
-										</button>
-										<button
-											class="btn btn-outline-warning btn-sm"
-										>
-											<i class="fas fa-edit"></i>
-										</button>
-										<button
-											class="btn btn-outline-danger btn-sm"
-										>
-											<i class="fas fa-trash"></i>
-										</button>
-									</div>
-								</td>
-							</tr>
-							<tr>
-								<td>8</td>
-								<td>Bangkok</td>
-								<td>Thailand</td>
-								<td>$1600</td>
-								<td>
-									<div class="btn-group btn-responsive">
-										<button
-											class="btn btn-outline-primary btn-sm"
-										>
-											<i class="fas fa-eye"></i>
-										</button>
-										<button
-											class="btn btn-outline-warning btn-sm"
-										>
-											<i class="fas fa-edit"></i>
-										</button>
-										<button
-											class="btn btn-outline-danger btn-sm"
-										>
-											<i class="fas fa-trash"></i>
-										</button>
-									</div>
-								</td>
-							</tr>
-						</tbody>
-					</table>
+			<div class="clients-table">
+				<div class="button-container">
+					<Button
+						pButton
+						label="Add New Client"
+						icon="pi pi-plus"
+						class="p-button-primary p-mb-3"
+						@click="showCreateClientForm = true"
+					></Button>
 				</div>
+				<DataTable
+					:value="clients"
+					:rows="5"
+					paginator
+					paginatorPosition="bottom"
+					class="p-datatable-gridlines"
+					striped-rows
+					:rowsPerPageOptions="[5, 10, 20]"
+				>
+					<Column
+						field="id"
+						header="ID"
+						:sortable="true"
+						style="width: 10%"
+					></Column>
+					<Column
+						field="name"
+						header="Name"
+						:sortable="true"
+						style="width: 15%"
+					></Column>
+					<Column
+						field="surname"
+						header="Surname"
+						:sortable="true"
+						style="width: 20%"
+					></Column>
+					<Column
+						field="email"
+						header="Email"
+						:sortable="true"
+						style="width: 40%"
+					></Column>
+
+					<Column header="Actions" style="width: 15%">
+						<template #body="{ data }">
+							<Button
+								pButton
+								icon="pi pi-pencil"
+								class="p-button-text p-button-rounded"
+								title="Edit"
+								@click="editClient(data)"
+							></Button>
+							<Button
+								pButton
+								icon="pi pi-calendar-plus"
+								class="p-button-text p-button-rounded"
+								title="Add Booking"
+								@click="addBooking(data)"
+							></Button>
+							<Button
+								pButton
+								icon="pi pi-trash"
+								class="p-button-text p-button-rounded"
+								title="Delete"
+								@click="deleteClient(data.id)"
+							></Button>
+						</template>
+					</Column>
+				</DataTable>
 			</div>
 		</main>
+		<Dialog
+			v-model:visible="showCreateClientForm"
+			header="Create New Client"
+			:closable="true"
+			:modal="true"
+			:style="{ width: '450px' }"
+		>
+			<Form
+				v-slot="$form"
+				class="form-container flex flex-column gap-3"
+				:model="newClient"
+				:resolver="createClientFormRules"
+				@submit="addClient"
+			>
+				<!-- Form to Create Client -->
+				<div
+					class="p-field flex justify-content-between align-items-center"
+				>
+					<InputText
+						id="name"
+						v-model="newClient.name"
+						placeholder="Client's name"
+					/>
+					<Message
+						v-if="$form.name?.invalid"
+						severity="error"
+						size="small"
+						>{{ $form.name.error.message }}
+					</Message>
+				</div>
 
-		<footer class="bg-dark text-center text-light p-3">
-			<p>&copy; 2024 Tunik & Shvets co.</p>
-			<div class="footer-icons">
-				<a href="tel:+123456789" class="mr-3"
-					><i class="fas fa-phone"></i
-				></a>
-				<a href="mailto:r.shvetsss@gmail.com" class="mr-3"
-					><i class="fas fa-envelope"></i
-				></a>
-				<a href="https://t.me/tearsalloverthefloor" class="mr-3"
-					><i class="fab fa-telegram"></i
-				></a>
-				<a href="https://wa.me/380670123456" class="mr-3"
-					><i class="fab fa-whatsapp"></i
-				></a>
-			</div>
-		</footer>
+				<div
+					class="p-field flex justify-content-between align-items-center"
+				>
+					<InputText
+						id="surname"
+						v-model="newClient.surname"
+						placeholder="Client's surname"
+					/>
+				</div>
+
+				<div
+					class="p-field flex justify-content-between align-items-center"
+				>
+					<InputText
+						id="email"
+						v-model="newClient.email"
+						placeholder="Client's email"
+						:class="{ 'p-invalid': createClientFormErrors.name }"
+					/>
+					<Message
+						v-if="$form.email?.invalid"
+						severity="error"
+						size="small"
+					>
+						{{ $form.email.error.message }}
+					</Message>
+				</div>
+
+				<Button label="Create" class="p-button-primary" type="submit" />
+			</Form>
+		</Dialog>
+		<CustomFooter />
 	</div>
 
 	<!-- Модальне вікно Авторизації -->
@@ -340,3 +322,51 @@ import CustomHeader from "@/components/CustomHeader.vue";
 		</div>
 	</div>
 </template>
+<style scoped>
+html,
+body {
+	overflow: hidden;
+}
+
+.clients-table {
+	display: flex;
+	flex-direction: column;
+	padding: 1rem;
+	gap: 0.5rem;
+}
+#page-wrapper {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+}
+
+main {
+	flex: 1;
+}
+
+footer {
+	margin-top: auto;
+}
+
+@media (max-width: 768px) {
+	.clients-table {
+		padding: 0.5rem;
+	}
+	.p-datatable {
+		font-size: 0.875rem;
+	}
+}
+
+.button-container {
+	display: flex;
+	justify-content: flex-end;
+}
+
+.button-container .p-button {
+	width: auto;
+}
+
+label {
+	margin: 0;
+}
+</style>
