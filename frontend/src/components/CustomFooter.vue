@@ -1,12 +1,3 @@
-<script setup>
-defineProps({
-	activePage: {
-		type: String,
-		required: true,
-	},
-});
-</script>
-
 <template>
 		<footer class="bg-dark text-center text-light p-3">
 			<p>&copy; 2024 Tunik & Shvets co.</p>
