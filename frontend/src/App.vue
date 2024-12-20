@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed } from "vue";
 import { defineAsyncComponent } from 'vue';
-import "@/styles/vue.css";
+import "@/styles/vue.scss";
 
 
 const Clients = defineAsyncComponent(() => import('@/pages/tables/Clients.vue'));

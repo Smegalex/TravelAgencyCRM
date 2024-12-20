@@ -6,6 +6,7 @@ from clients import clients_bp
 from places import places_bp
 from bookings import bookings_bp
 from trips import trips_bp
+from login import login_bp
 
 app = Flask(__name__)
 CORS(app)
@@ -16,6 +17,7 @@ app.register_blueprint(clients_bp)
 app.register_blueprint(places_bp)
 app.register_blueprint(bookings_bp)
 app.register_blueprint(trips_bp)
+app.register_blueprint(login_bp)
 
 if __name__ == '__main__':
     app.run(debug=True)
