@@ -5,7 +5,19 @@ table_name = "managers"
 
 
 def get_manager_from_DB(manager_id=None):
-    return select_records(table_name, manager_id)
+    records = select_records(table_name, manager_id)
+    result = []
+    for record in records:
+        record_dict = {
+            'id': record[0],
+            'name': record[1],
+            'surname': record[2],
+            'email': record[3],
+            'adminRights': record[4],
+            'password': record[5]
+        }
+        result.append(record_dict)
+    return result
 
 
 managers_bp = Blueprint('managers', __name__)

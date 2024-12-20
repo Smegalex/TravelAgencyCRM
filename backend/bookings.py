@@ -5,7 +5,18 @@ table_name = "bookings"
 
 
 def get_booking_from_DB(booking_id=None):
-    return select_records(table_name, booking_id)
+    records = select_records(table_name, booking_id)
+    result = []
+    for record in records:
+        record_dict = {
+            'id': record[0],
+            'idclient': record[1],
+            'idmanager': record[2],
+            'idtrip': record[3],
+            'people_amount': record[4]
+        }
+        result.append(record_dict)
+    return result
 
 
 bookings_bp = Blueprint('bookings', __name__)

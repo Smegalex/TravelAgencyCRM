@@ -5,7 +5,17 @@ table_name = "clients"
 
 
 def get_client_from_DB(client_id=None):
-    return select_records(table_name, client_id)
+    records = select_records(table_name, client_id)
+    result = []
+    for record in records:
+        record_dict = {
+            'id': record[0],
+            'name': record[1],
+            'surname': record[2],
+            'email': record[3],
+        }
+        result.append(record_dict)
+    return result
 
 
 clients_bp = Blueprint('clients', __name__)

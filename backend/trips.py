@@ -3,9 +3,18 @@ from db_cursor import select_records, insert_new_record, get_last_id, update_row
 
 table_name = "trips"
 
-
 def get_trip_from_DB(trip_id=None):
-    return select_records(table_name, trip_id)
+    records = select_records(table_name, trip_id)
+    result = []
+    for record in records:
+        record_dict = {
+            'id': record[0],
+            'name': record[1],
+            'idplace': record[2],
+            'season': record[3]
+        }
+        result.append(record_dict)
+    return result
 
 
 trips_bp = Blueprint('trips', __name__)

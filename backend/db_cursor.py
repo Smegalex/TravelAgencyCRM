@@ -1,5 +1,6 @@
 import oracledb
 
+
 def get_db_cursor():
     # Establish connection
     conn = oracledb.connect(
@@ -17,6 +18,8 @@ def get_db_cursor():
     return conn, cursor
 
 # Функція для вибірки даних з довільної таблиці за id або всі записи з обробкою помилок
+
+
 def select_records(table_name, record_id=None):
     # Отримуємо підключення та курсор
     conn, cursor = None, None
@@ -29,7 +32,7 @@ def select_records(table_name, record_id=None):
             cursor.execute(sql_query, {"id": record_id})
         else:
             # Якщо id не передано, вибираємо всі записи
-            sql_query = f"SELECT * FROM {table_name}"
+            sql_query = f"SELECT * FROM {table_name} ORDER BY id ASC"
             cursor.execute(sql_query)
 
         # Отримуємо результати
@@ -51,7 +54,6 @@ def select_records(table_name, record_id=None):
             conn.close()
 
 
-
 # Функція для вставки нового елемента в таблицю
 def insert_new_record(table_name, record_data):
     # Отримуємо підключення та курсор
@@ -59,7 +61,8 @@ def insert_new_record(table_name, record_data):
 
     # Формуємо динамічний SQL запит для вставки даних
     columns = ', '.join(record_data.keys())  # Підготовка імен стовпців
-    placeholders = ', '.join([f":{key}" for key in record_data.keys()])  # Підготовка плейсхолдерів для значень
+    # Підготовка плейсхолдерів для значень
+    placeholders = ', '.join([f":{key}" for key in record_data.keys()])
 
     # Створюємо SQL запит для вставки в вказану таблицю
     sql_query = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
@@ -83,6 +86,7 @@ def insert_new_record(table_name, record_data):
         cursor.close()
         conn.close()
 
+
 def get_last_id(table_name):
     if not table_name:
         print("Table name must be provided.")
@@ -92,7 +96,7 @@ def get_last_id(table_name):
     if conn is None or cursor is None:
         print("Failed to establish database connection or cursor.")
         return None
-    
+
     try:
         # Define the query to get the first row's ID ordered by ID DESC
         query = f"""
@@ -101,35 +105,36 @@ def get_last_id(table_name):
         WHERE ROWNUM = 1
         ORDER BY id DESC
         """
-        
+
         # Execute the query
         cursor.execute(query)
-        
+
         # Fetch the result (it should return a single row)
         row = cursor.fetchone()
         print(row[0])
-        
+
         if row:
             return row[0]  # Return the ID value from the query result
         else:
             print("No rows found.")
             return None
-            
+
     except oracledb.DatabaseError as e:
         print(f"Error executing the query: {e}")
         return None
-    
+
     finally:
         # Ensure the connection is closed after the operation
         if conn:
             conn.close()
             print("Connection closed.")
 
+
 def update_row_in_table(table_name, row_id, row_data):
     if not table_name:
         print("Table name must be provided.")
         return None
-    
+
     if not row_data or not isinstance(row_data, dict):
         print("Row data must be a non-empty dictionary.")
         return None
@@ -143,7 +148,7 @@ def update_row_in_table(table_name, row_id, row_data):
     try:
         # Prepare the column names and values for the update query
         columns = ', '.join(f"{key} = :{key}" for key in row_data.keys())
-        
+
         # Create the SQL query to update the row
         sql = f"UPDATE {table_name} SET {columns} WHERE id = :row_id"
 
@@ -154,7 +159,7 @@ def update_row_in_table(table_name, row_id, row_data):
         conn.commit()
 
         print(f"Row with id {row_id} updated successfully in {table_name}!")
-    
+
     except oracledb.DatabaseError as e:
         print(f"Error executing the query: {e}")
         return None
@@ -167,6 +172,7 @@ def update_row_in_table(table_name, row_id, row_data):
         if conn:
             conn.close()
             print("Connection closed.")
+
 
 def delete_row_from_table(table_name, row_id):
     if not table_name:
@@ -194,7 +200,7 @@ def delete_row_from_table(table_name, row_id):
         conn.commit()
 
         print(f"Row with id {row_id} deleted successfully from {table_name}!")
-    
+
     except oracledb.DatabaseError as e:
         print(f"Error executing the query: {e}")
         return None

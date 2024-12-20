@@ -4,7 +4,18 @@ from db_cursor import select_records, insert_new_record, get_last_id, update_row
 table_name = "places"
 
 def get_place_from_DB(place_id=None):
-    return select_records(table_name, place_id)
+    records = select_records(table_name, place_id)
+    result = []
+    for record in records:
+        record_dict = {
+            'id': record[0],
+            'name': record[1],
+            'country': record[2],
+            'coordinates': record[3],
+            'description': record[4]
+        }
+        result.append(record_dict)
+    return result
 
 places_bp = Blueprint('places', __name__)
 
