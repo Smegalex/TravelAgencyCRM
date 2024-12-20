@@ -1,3 +1,7 @@
+
+
+@import 'primeicons/primeicons.css'; /* Icons */
+
 :root {
 	--primary-color: #f0ffe0;
 	--dark-color: #151616;
@@ -147,4 +151,9 @@ main {
 		width: 100%;
     max-width: 100%;
 	}
+}
+
+.p-paginator-page, .p-paginator-next, .p-paginator-last, .p-paginator-first, .p-paginator-prev {
+	width: var(--p-paginator-nav-button-width);
+	min-width: unset;
 }
