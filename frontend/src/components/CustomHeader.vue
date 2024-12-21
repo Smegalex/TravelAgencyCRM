@@ -84,6 +84,16 @@ const openLoginModal = () => {
 						>Trips panel</a
 					>
 				</li>
+				<li
+					class="nav-item"
+					:class="activePage === 'managers' ? 'active' : ''"
+				>
+					<a
+						class="nav-link"
+						:href="activePage === 'managers' ? '#' : '/managers'"
+						>Managers panel</a
+					>
+				</li>
 				<li class="nav-item">
 					<a
 						class="nav-link"

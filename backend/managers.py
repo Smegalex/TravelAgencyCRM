@@ -13,7 +13,7 @@ def get_manager_from_DB(manager_id=None):
             'name': record[1],
             'surname': record[2],
             'email': record[3],
-            'adminRights': record[4],
+            'adminRights': bool(record[4]),
             'password': record[5]
         }
         result.append(record_dict)
@@ -41,7 +41,7 @@ def add_manager():
         "name": manager_data["name"],
         "surname": manager_data["surname"],
         "email": manager_data["email"],
-        "adminrights": manager_data["adminrights"],
+        "adminRights": manager_data["adminRights"],
         "password": manager_data["password"]
     }
     insert_new_record(table_name, new_manager)
@@ -51,17 +51,24 @@ def add_manager():
 
 @managers_bp.route('/managers/<int:manager_id>', methods=['PUT'])
 def update_manager(manager_id):
+    password_bool = request.args.get('password')
     manager_data = request.json
     managers = get_manager_from_DB()
     manager = next((s for s in managers if s['id'] == manager_id), None)
     print(manager)
     if not manager:
         return jsonify({"error": "manager not found"}), 404
-    update_row_in_table(table_name, manager_id, {"name": manager_data["name"],
+    if password_bool:
+        update_row_in_table(table_name, manager_id, {"name": manager_data["name"],
                                                  "surname": manager_data["surname"],
                                                  "email": manager_data["email"],
-                                                 "adminrights": manager_data["adminrights"],
+                                                 "adminRights": manager_data["adminRights"],
                                                  "password": manager_data["password"]})
+    else:
+        update_row_in_table(table_name, manager_id, {"name": manager_data["name"],
+                                                     "surname": manager_data["surname"],
+                                                     "email": manager_data["email"],
+                                                     "adminRights": manager_data["adminRights"]})
     return jsonify(get_manager_from_DB(manager_id))
 
 
