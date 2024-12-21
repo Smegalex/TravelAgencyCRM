@@ -1,11 +1,12 @@
 <script setup>
 import { ref, computed } from "vue";
-import { defineAsyncComponent } from 'vue';
-import "@/styles/vue.css";
+import { defineAsyncComponent } from "vue";
+import "@/styles/vue.scss";
 
-
-const Clients = defineAsyncComponent(() => import('@/pages/tables/Clients.vue'));
-const Home = defineAsyncComponent(() => import('@/pages/Home.vue'));
+const Clients = defineAsyncComponent(() =>
+	import("@/pages/tables/Clients.vue")
+);
+const Home = defineAsyncComponent(() => import("@/pages/Home.vue"));
 
 const routes = {
 	"/": Home,
@@ -19,8 +20,8 @@ window.addEventListener("popstate", () => {
 });
 
 const navigate = (path) => {
-  window.history.pushState({}, '', path);
-  currentPath.value = path; // Update current path manually
+	window.history.pushState({}, "", path);
+	currentPath.value = path; // Update current path manually
 };
 
 const currentView = computed(() => {
@@ -28,7 +29,6 @@ const currentView = computed(() => {
 });
 // app.component("CustomHeader", CustomHeader);
 </script>
-
 <template>
 	<component :is="currentView" />
 </template>
