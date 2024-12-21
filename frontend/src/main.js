@@ -1,5 +1,6 @@
 import { createApp } from "vue";
 import App from "./App.vue";
+import router from "./router";
 import PrimeVue from "primevue/config";
 import CustomHeader from "./components/CustomHeader.vue";
 import CustomFooter from "./components/CustomFooter.vue";
@@ -8,7 +9,7 @@ import Nora from "@primevue/themes/nora";
 import "primeflex/primeflex.css";
 import "@/styles/styles.scss";
 
-const app = createApp(App);
+const app = createApp(App).use(router);
 
 app.use(PrimeVue, {
 	theme: {

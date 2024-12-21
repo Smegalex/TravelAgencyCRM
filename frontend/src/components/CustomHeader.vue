@@ -50,7 +50,7 @@ const openLoginModal = () => {
         <li class="nav-item" :class="activePage === 'clients' ? 'active' : ''">
           <a
             class="nav-link"
-            :href="activePage === 'clients' ? '#' : '/clients-panel'"
+            :href="activePage === 'clients' ? '#' : '/clients'"
             >Clients panel</a
           >
         </li>
