@@ -1,91 +1,174 @@
-<script>
+<script setup>
 import CustomHeader from "@/components/CustomHeader.vue";
 import CustomFooter from "@/components/CustomFooter.vue";
-import DataTable from "primevue/datatable";
-import Column from "primevue/column";
-import Button from "primevue/button";
-import { Form } from "@primevue/forms";
+import UniversalModal from "../modals/UniversalModal.vue";
 import { ref, onMounted } from "vue";
-import * as Yup from "yup";
+import * as yup from "yup";
 import { yupResolver } from "@primevue/forms/resolvers/yup";
 
-export default {
-	name: "ClientsTable",
-	setup() {
-		const clients = ref([]);
-		const showCreateClientForm = ref(false);
-		const newClient = ref({ name: "", surname: null, email: "" });
-		// const createCustomerFormRules = {
-		// 	name: required(),
-		// 	email: [required(), email()],
-		// };
-		const createClientFormErrors = ref({
-			name: null,
-			email: null,
-		});
+const clients = ref([]);
 
-		const createClientFormSchema = Yup.object().shape({
-			name: Yup.string().required("Name is required."),
-			surname: Yup.string(),
-			email: Yup.string()
+const fetchClients = async () => {
+	try {
+		const response = await fetch("http://127.0.0.1:5000/clients");
+		clients.value = await response.json(); // Зберігаємо відповідь у реактивну змінну
+		// console.log(clients.value);
+	} catch (error) {
+		console.error("Error fetching clients:", error);
+	}
+};
+
+const clientFormResolver = ref(
+	yupResolver(
+		yup.object().shape({
+			name: yup
+				.string()
+				.required("Name is required.")
+				.max(255, "Name too long."),
+			surname: yup.string().notRequired(),
+			email: yup
+				.string()
 				.email("Invalid email format")
-				.required("Email is required."),
-		});
+				.required("Email is required.")
+				.max(50, "Email too long. Contact IT."),
+		})
+	)
+);
 
-		const fetchClients = async () => {
-			try {
-				const response = await fetch("http://127.0.0.1:5000/clients");
-				clients.value = await response.json(); // Зберігаємо відповідь у реактивну змінну
-				console.log(clients.value);
-			} catch (error) {
-				console.error("Error fetching clients:", error);
-			}
-		};
-		const deleteClient = async (id) => {
-			try {
-				await fetch(`http://127.0.0.1:5000/clients/${id}`, {
-					method: "DELETE",
-				});
-				clients.value = clients.value.filter(
-					(client) => client.id !== id
-				); // Update local list
-			} catch (error) {
-				console.error("Error deleting client:", error);
-			}
-		};
+// create new client
+const showCreateClientForm = ref(false);
+const newClient = ref({ name: "", surname: null, email: "" });
+const createClientFormFields = [
+	{
+		name: "name",
+		placeholder: "Client's name*",
+		props: "",
+		type: "",
+	},
+	{
+		name: "surname",
+		placeholder: "Client's surname",
+		props: "",
+		type: "",
+	},
+	{
+		name: "email",
+		placeholder: "Client's email*",
+		props: "",
+		type: "",
+	},
+];
 
-		const addClient = async () => {
-			try {
-				const response = await fetch("http://127.0.0.1:5000/clients", {
-					method: "POST",
+const addClient = async ({ valid }) => {
+	if (valid) {
+		try {
+			const response = await fetch("http://127.0.0.1:5000/clients", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(newClient.value), // Directly use validated form values
+			});
+			const addedClient = await response.json();
+			clients.value.push(addedClient); // Add new student to local list
+			newClient.value = { name: "", surname: null, email: "" }; // Reset form fields
+			showCreateClientForm.value = false;
+		} catch (error) {
+			console.error("Error adding trip:", error);
+		}
+	}
+};
+
+const changeCreateFormVisibility = () => {
+	showCreateClientForm.value = !showCreateClientForm.value;
+};
+
+// edit client
+const currentClient = ref([]);
+const showEditClientForm = ref(false);
+
+const editClientFormFields = [
+	{
+		name: "name",
+		placeholder: "Client's name*",
+		props: "",
+		type: "",
+	},
+	{
+		name: "surname",
+		placeholder: "Client's surname",
+		props: "",
+		type: "",
+	},
+	{
+		name: "email",
+		placeholder: "Client's email*",
+		props: "",
+		type: "",
+	},
+];
+
+const changeEditFormVisibility = () => {
+	showEditClientForm.value = !showEditClientForm.value;
+};
+
+const fetchClient = async (id) => {
+	try {
+		const response = await fetch(`http://127.0.0.1:5000/clients/${id}`);
+		currentClient.value = await response.json(); // Зберігаємо відповідь у реактивну змінну
+		currentClient.value = currentClient.value[0];
+		console.log(currentClient.value);
+	} catch (error) {
+		console.error(`Error fetching client (id: ${id}):`, error);
+	}
+};
+
+const editClientTrigger = async (id) => {
+	await fetchClient(id);
+	showEditClientForm.value = true;
+	console.log(currentClient.value);
+};
+
+const editClient = async ({ valid }) => {
+	if (valid) {
+		try {
+			const id = currentClient.value["id"];
+			const response = await fetch(
+				`http://127.0.0.1:5000/clients/${id}`,
+				{
+					method: "PUT",
 					headers: {
 						"Content-Type": "application/json",
 					},
-					body: JSON.stringify(newClient.value),
-				});
-				const addedClient = await response.json();
-				clients.value.push(addedClient); // Add new student to local list
-				newClient.value = { name: "", surname: null, email: "" }; // Reset form fields
-				showCreateClientForm.value = false;
-			} catch (error) {
-				console.error("Error adding trip:", error);
-			}
-		};
-		onMounted(() => {
-			fetchClients();
-		});
+					body: JSON.stringify(currentClient.value), // Directly use validated form values
+				}
+			);
+			const editedClient = (await response.json())[0];
 
-		return {
-			clients,
-			deleteClient,
-			showCreateClientForm,
-			newClient,
-			addClient,
-			createClientFormErrors,
-			createClientFormRules,
-		};
-	},
+			clients.value = clients.value.map((client) =>
+				client.id == editedClient.id ? editedClient : client
+			);
+			showEditClientForm.value = false;
+		} catch (error) {
+			console.error("Error adding trip:", error);
+		}
+	}
 };
+
+const deleteClient = async (id) => {
+	try {
+		await fetch(`http://127.0.0.1:5000/clients/${id}`, {
+			method: "DELETE",
+		});
+		clients.value = clients.value.filter((client) => client.id !== id); // Update local list
+	} catch (error) {
+		console.error("Error deleting client:", error);
+	}
+};
+
+onMounted(() => {
+	fetchClients();
+});
 </script>
 <template>
 	<div id="page-wrapper" style="overflow-y: scroll; height: 100vh">
@@ -145,7 +228,7 @@ export default {
 								icon="pi pi-pencil"
 								class="p-button-text p-button-rounded"
 								title="Edit"
-								@click="editClient(data)"
+								@click="editClientTrigger(data.id)"
 							></Button>
 							<Button
 								pButton
@@ -166,68 +249,26 @@ export default {
 				</DataTable>
 			</div>
 		</main>
-		<Dialog
-			v-model:visible="showCreateClientForm"
-			header="Create New Client"
-			:closable="true"
-			:modal="true"
-			:style="{ width: '450px' }"
-		>
-			<Form
-				v-slot="$form"
-				class="form-container flex flex-column gap-3"
-				:model="newClient"
-				:resolver="createClientFormRules"
-				@submit="addClient"
-			>
-				<!-- Form to Create Client -->
-				<div
-					class="p-field flex justify-content-between align-items-center"
-				>
-					<InputText
-						id="name"
-						v-model="newClient.name"
-						placeholder="Client's name"
-					/>
-					<Message
-						v-if="$form.name?.invalid"
-						severity="error"
-						size="small"
-						>{{ $form.name.error.message }}
-					</Message>
-				</div>
-
-				<div
-					class="p-field flex justify-content-between align-items-center"
-				>
-					<InputText
-						id="surname"
-						v-model="newClient.surname"
-						placeholder="Client's surname"
-					/>
-				</div>
-
-				<div
-					class="p-field flex justify-content-between align-items-center"
-				>
-					<InputText
-						id="email"
-						v-model="newClient.email"
-						placeholder="Client's email"
-						:class="{ 'p-invalid': createClientFormErrors.name }"
-					/>
-					<Message
-						v-if="$form.email?.invalid"
-						severity="error"
-						size="small"
-					>
-						{{ $form.email.error.message }}
-					</Message>
-				</div>
-
-				<Button label="Create" class="p-button-primary" type="submit" />
-			</Form>
-		</Dialog>
+		<UniversalModal
+			header="Create new client"
+			:show-form="showCreateClientForm"
+			@change-visibility="changeCreateFormVisibility"
+			:fields="createClientFormFields"
+			:form-resolver="clientFormResolver"
+			:data="newClient"
+			:call-back="addClient"
+			submit-label="Create"
+		/>
+		<UniversalModal
+			header="Edit client"
+			:show-form="showEditClientForm"
+			@change-visibility="changeEditFormVisibility"
+			:fields="editClientFormFields"
+			:form-resolver="clientFormResolver"
+			:data="currentClient"
+			:call-back="editClient"
+			submit-label="Save"
+		/>
 		<CustomFooter />
 	</div>
 
