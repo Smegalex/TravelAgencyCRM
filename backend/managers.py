@@ -53,7 +53,7 @@ def add_manager():
 def update_manager(manager_id):
     manager_data = request.json
     managers = get_manager_from_DB()
-    manager = next((s for s in managers if s[0] == manager_id), None)
+    manager = next((s for s in managers if s['id'] == manager_id), None)
     print(manager)
     if not manager:
         return jsonify({"error": "manager not found"}), 404

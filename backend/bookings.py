@@ -51,7 +51,7 @@ def add_booking():
 def update_booking(booking_id):
     booking_data = request.json
     bookings = get_booking_from_DB()
-    booking = next((s for s in bookings if s[0] == booking_id), None)
+    booking = next((s for s in bookings if s['id'] == booking_id), None)
     print(booking)
     if not booking:
         return jsonify({"error": "booking not found"}), 404

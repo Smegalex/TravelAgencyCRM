@@ -49,7 +49,7 @@ def add_client():
 def update_client(client_id):
     client_data = request.json
     clients = get_client_from_DB()
-    client = next((s for s in clients if s[0] == client_id), None)
+    client = next((s for s in clients if s['id'] == client_id), None)
     print(client)
     if not client:
         return jsonify({"error": "client not found"}), 404

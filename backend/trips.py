@@ -47,7 +47,7 @@ def add_trip():
 def update_trip(trip_id):
     trip_data = request.json
     trips = get_trip_from_DB()
-    trip = next((s for s in trips if s[0] == trip_id), None)
+    trip = next((s for s in trips if s['id'] == trip_id), None)
     print(trip)
     if not trip:
         return jsonify({"error": "trip not found"}), 404

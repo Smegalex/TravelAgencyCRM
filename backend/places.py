@@ -45,7 +45,7 @@ def add_place():
 def update_place(place_id):
     place_data = request.json
     places = get_place_from_DB()
-    place = next((s for s in places if s[0] == place_id), None)
+    place = next((s for s in places if s['id'] == place_id), None)
     if not place:
         return jsonify({"error": "place not found"}), 404
     update_row_in_table(
