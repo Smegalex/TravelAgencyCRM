@@ -1,21 +1,29 @@
 <script setup>
+// Vue
+import { ref, onMounted } from "vue";
+
+// Components
 import CustomHeader from "@/components/CustomHeader.vue";
 import CustomFooter from "@/components/CustomFooter.vue";
 import UniversalModal from "../modals/UniversalModal.vue";
-import { ref, onMounted } from "vue";
+
+// Yup
 import * as yup from "yup";
 import { yupResolver } from "@primevue/forms/resolvers/yup";
 
+// Requests
+import {
+	fetchClient,
+	fetchClients,
+	addClient,
+	updateClient,
+	deleteClient,
+} from "@/requests/clientsRequests";
+
 const clients = ref([]);
 
-const fetchClients = async () => {
-	try {
-		const response = await fetch("http://127.0.0.1:5000/clients");
-		clients.value = await response.json(); // Зберігаємо відповідь у реактивну змінну
-		// console.log(clients.value);
-	} catch (error) {
-		console.error("Error fetching clients:", error);
-	}
+const getClients = async () => {
+	clients.value = await fetchClients();
 };
 
 const clientFormResolver = ref(
@@ -59,23 +67,12 @@ const createClientFormFields = [
 	},
 ];
 
-const addClient = async ({ valid }) => {
+const createClient = async ({ valid }) => {
 	if (valid) {
-		try {
-			const response = await fetch("http://127.0.0.1:5000/clients", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(newClient.value), // Directly use validated form values
-			});
-			const addedClient = await response.json();
-			clients.value.push(addedClient); // Add new student to local list
-			newClient.value = { name: "", surname: null, email: "" }; // Reset form fields
-			showCreateClientForm.value = false;
-		} catch (error) {
-			console.error("Error adding trip:", error);
-		}
+		const addedClient = await addClient(newClient.value);
+		clients.value.push(addedClient); // Add new student to local list
+		newClient.value = { name: "", surname: null, email: "" }; // Reset form fields
+		showCreateClientForm.value = false;
 	}
 };
 
@@ -112,62 +109,29 @@ const changeEditFormVisibility = () => {
 	showEditClientForm.value = !showEditClientForm.value;
 };
 
-const fetchClient = async (id) => {
-	try {
-		const response = await fetch(`http://127.0.0.1:5000/clients/${id}`);
-		currentClient.value = await response.json(); // Зберігаємо відповідь у реактивну змінну
-		currentClient.value = currentClient.value[0];
-		console.log(currentClient.value);
-	} catch (error) {
-		console.error(`Error fetching client (id: ${id}):`, error);
-	}
-};
-
 const editClientTrigger = async (id) => {
-	await fetchClient(id);
+	currentClient.value = await fetchClient(id);
 	showEditClientForm.value = true;
-	console.log(currentClient.value);
+	// console.log(currentClient.value);
 };
 
 const editClient = async ({ valid }) => {
 	if (valid) {
-		try {
-			const id = currentClient.value["id"];
-			const response = await fetch(
-				`http://127.0.0.1:5000/clients/${id}`,
-				{
-					method: "PUT",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify(currentClient.value), // Directly use validated form values
-				}
-			);
-			const editedClient = (await response.json())[0];
-
-			clients.value = clients.value.map((client) =>
-				client.id == editedClient.id ? editedClient : client
-			);
-			showEditClientForm.value = false;
-		} catch (error) {
-			console.error("Error adding trip:", error);
-		}
+		const editedClient = await updateClient(currentClient.value);
+		clients.value = clients.value.map((client) =>
+			client.id == editedClient.id ? editedClient : client
+		);
+		showEditClientForm.value = false;
 	}
 };
 
-const deleteClient = async (id) => {
-	try {
-		await fetch(`http://127.0.0.1:5000/clients/${id}`, {
-			method: "DELETE",
-		});
-		clients.value = clients.value.filter((client) => client.id !== id); // Update local list
-	} catch (error) {
-		console.error("Error deleting client:", error);
-	}
+const removeClient = async (id) => {
+	await deleteClient(id);
+	clients.value = clients.value.filter((client) => client.id !== id); // Update local list
 };
 
 onMounted(() => {
-	fetchClients();
+	getClients();
 });
 </script>
 <template>
@@ -225,6 +189,14 @@ onMounted(() => {
 						<template #body="{ data }">
 							<Button
 								pButton
+								icon="pi pi-external-link"
+								class="p-button-text p-button-rounded"
+								title="Detailed view"
+								as="router-link"
+								:to="'/clients/' + data.id"
+							></Button>
+							<Button
+								pButton
 								icon="pi pi-pencil"
 								class="p-button-text p-button-rounded"
 								title="Edit"
@@ -232,17 +204,10 @@ onMounted(() => {
 							></Button>
 							<Button
 								pButton
-								icon="pi pi-calendar-plus"
-								class="p-button-text p-button-rounded"
-								title="Add Booking"
-								@click="addBooking(data)"
-							></Button>
-							<Button
-								pButton
 								icon="pi pi-trash"
 								class="p-button-text p-button-rounded"
 								title="Delete"
-								@click="deleteClient(data.id)"
+								@click="removeClient(data.id)"
 							></Button>
 						</template>
 					</Column>
@@ -256,7 +221,7 @@ onMounted(() => {
 			:fields="createClientFormFields"
 			:form-resolver="clientFormResolver"
 			:data="newClient"
-			:call-back="addClient"
+			:call-back="createClient"
 			submit-label="Create"
 		/>
 		<UniversalModal
