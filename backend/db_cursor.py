@@ -213,3 +213,34 @@ def delete_row_from_table(table_name, row_id):
         if conn:
             conn.close()
             print("Connection closed.")
+
+
+def check_user_credentials(email, password):
+    """
+    Перевіряє облікові дані користувача за email та паролем.
+    """
+    conn, cursor = get_db_cursor()
+    try:
+        # Виконання запиту для перевірки користувача
+        sql_query = """
+        SELECT COUNT(*) 
+        FROM managers 
+        WHERE email = :email AND password = :password
+        """
+        cursor.execute(sql_query, {"email": email, "password": password})
+        result = cursor.fetchone()
+
+        # Повернення True, якщо знайдено запис, інакше False
+        return result[0] > 0
+
+    except Exception as e:
+        print(f"Error checking credentials: {e}")
+        return False
+
+    finally:
+        # Закриваємо курсор і підключення
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
