@@ -36,7 +36,8 @@ def add_trip():
     trip_data = request.json
     new_trip = {
         "name": trip_data["name"],
-        "idplace": trip_data["idplace"]
+        "idplace": trip_data["idplace"],
+        "season": trip_data["season"]
     }
     insert_new_record(table_name, new_trip)
     created_trip = get_trip_from_DB(get_last_id(table_name))[0]

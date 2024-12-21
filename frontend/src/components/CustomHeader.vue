@@ -63,6 +63,22 @@ const openLoginModal = () => {
             >FAQ</a
           >
         </li>
+         <li class="nav-item" :class="activePage === 'trips' ? 'active' : ''">
+          <a
+            class="nav-link"
+            :href="activePage === 'trips' ? '#' : '/trips'"
+            >Trips panel</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="#"
+            data-toggle="modal"
+            data-target="#faqModal"
+            >FAQ</a
+          >
+        </li>
       </ul>
     </div>
   </nav>
