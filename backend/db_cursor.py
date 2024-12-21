@@ -20,20 +20,30 @@ def get_db_cursor():
 # Функція для вибірки даних з довільної таблиці за id або всі записи з обробкою помилок
 
 
-def select_records(table_name, record_id=None):
+def select_records(table_name, record_id=None, where=None):
     # Отримуємо підключення та курсор
     conn, cursor = None, None
     try:
         conn, cursor = get_db_cursor()
 
-        # Якщо передано id, створюємо SQL запит для вибірки по id
+        # Створюємо основний SQL запит
+        sql_query = f"SELECT * FROM {table_name}"
+        
+        # Якщо передано id, додаємо умову для вибірки по id
         if record_id is not None:
-            sql_query = f"SELECT * FROM {table_name} WHERE id = :id"
-            cursor.execute(sql_query, {"id": record_id})
+            sql_query += f" WHERE id = :id"
+            params = {"id": record_id}
+        elif where is not None:
+            # Якщо передано where, додаємо його до умови
+            sql_query += f" WHERE {where}"
+            params = {}
         else:
-            # Якщо id не передано, вибираємо всі записи
-            sql_query = f"SELECT * FROM {table_name} ORDER BY id ASC"
-            cursor.execute(sql_query)
+            # Якщо id та where не передано, вибираємо всі записи
+            sql_query += " ORDER BY id ASC"
+            params = {}
+
+        # Виконуємо запит
+        cursor.execute(sql_query, params)
 
         # Отримуємо результати
         records = cursor.fetchall()

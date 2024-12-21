@@ -4,18 +4,19 @@ from db_cursor import select_records, insert_new_record, get_last_id, update_row
 table_name = "bookings"
 
 
-def get_booking_from_DB(booking_id=None):
-    records = select_records(table_name, booking_id)
+def get_booking_from_DB(booking_id=None, where=None):
+    records = select_records(table_name, booking_id, where)
     result = []
-    for record in records:
-        record_dict = {
-            'id': record[0],
-            'idclient': record[1],
-            'idmanager': record[2],
-            'idtrip': record[3],
-            'people_amount': record[4]
-        }
-        result.append(record_dict)
+    if records:
+        for record in records:
+            record_dict = {
+                'id': record[0],
+                'idclient': record[1],
+                'idmanager': record[2],
+                'idtrip': record[3],
+                'people_amount': record[4]
+            }
+            result.append(record_dict)
     return result
 
 
@@ -30,6 +31,11 @@ def get_bookings():
 @bookings_bp.route('/bookings/<int:booking_id>', methods=['GET'])
 def get_booking(booking_id):
     return jsonify(get_booking_from_DB(booking_id))
+
+
+@bookings_bp.route('/clients/<int:client_id>/bookings', methods=['GET'])
+def get_bookings_by_client(client_id):
+    return jsonify(get_booking_from_DB(where=f"idclient = {client_id}"))
 
 
 @bookings_bp.route('/bookings', methods=['POST'])
