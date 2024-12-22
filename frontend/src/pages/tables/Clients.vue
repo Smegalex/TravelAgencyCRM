@@ -110,7 +110,7 @@ const changeEditFormVisibility = () => {
 };
 
 const editClientTrigger = async (id) => {
-	currentClient.value = await fetchClient(id);
+	currentClient.value = clients.value.find((client) => client.id === id);
 	showEditClientForm.value = true;
 	// console.log(currentClient.value);
 };
@@ -135,7 +135,7 @@ onMounted(() => {
 });
 </script>
 <template>
-	<div id="page-wrapper" style="overflow-y: scroll; height: 100vh">
+	<div id="page-wrapper" class="h-screen overflow-y-scroll flex flex-column">
 		<!-- Header -->
 		<header>
 			<CustomHeader active-page="clients" />
@@ -147,7 +147,7 @@ onMounted(() => {
 						pButton
 						label="Add New Client"
 						icon="pi pi-plus"
-						class="p-button-primary p-mb-3"
+						class="p-mb-3"
 						@click="showCreateClientForm = true"
 					></Button>
 				</div>
@@ -190,7 +190,8 @@ onMounted(() => {
 							<Button
 								pButton
 								icon="pi pi-external-link"
-								class="p-button-text p-button-rounded"
+								rounded
+								variant="text"
 								title="Detailed view"
 								as="router-link"
 								:to="'/clients/' + data.id"
@@ -198,14 +199,17 @@ onMounted(() => {
 							<Button
 								pButton
 								icon="pi pi-pencil"
-								class="p-button-text p-button-rounded"
+								rounded
+								variant="text"
 								title="Edit"
 								@click="editClientTrigger(data.id)"
 							></Button>
 							<Button
 								pButton
 								icon="pi pi-trash"
-								class="p-button-text p-button-rounded"
+								severity="danger"
+								rounded
+								variant="text"
 								title="Delete"
 								@click="removeClient(data.id)"
 							></Button>
@@ -340,18 +344,9 @@ body {
 	padding: 1rem;
 	gap: 0.5rem;
 }
-#page-wrapper {
-	display: flex;
-	flex-direction: column;
-	min-height: 100vh;
-}
 
 main {
 	flex: 1;
-}
-
-footer {
-	margin-top: auto;
 }
 
 @media (max-width: 768px) {

@@ -72,22 +72,25 @@ console.log(data);
 					:name="field.name"
 					v-bind="field.props"
 					v-model="data[field.name]"
-          v-if="field.type === 'inputText' || !field.type"
+					v-if="field.type === 'inputText' || !field.type"
 					:placeholder="field.placeholder"
 					:model-value="data[field.name]"
 					class="mb-0"
 					fluid
 				/>
-        <div class="flex items-center gap-2" v-if ="field.type === 'checkbox'">
-        <Checkbox
-            :name="field.name"
-					  v-bind="field.props"
-					  v-model="data[field.name]"
-            :inputId="field.name"
-            binary
-        ></Checkbox>
-          <label :for="field.name"> {{field.placeholder}} </label>
-    </div>
+				<div
+					class="flex items-center gap-2"
+					v-if="field.type === 'checkbox'"
+				>
+					<Checkbox
+						:name="field.name"
+						v-bind="field.props"
+						v-model="data[field.name]"
+						:inputId="field.name"
+						binary
+					></Checkbox>
+					<label :for="field.name"> {{ field.placeholder }} </label>
+				</div>
 				<Message
 					v-if="$form[field.name]?.invalid"
 					severity="error"
