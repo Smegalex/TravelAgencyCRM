@@ -27,7 +27,7 @@ const addClient = async (client) => {
 		});
 		return await response.json();
 	} catch (error) {
-		console.error("Error adding trip:", error);
+		console.error("Error adding client:", error);
 	}
 };
 
@@ -43,7 +43,7 @@ const updateClient = async (client) => {
 		});
 		return (await response.json())[0];
 	} catch (error) {
-		console.error("Error adding trip:", error);
+		console.error(`Error updating client (id: ${client['id']}):`, error);
 	}
 };
 
@@ -53,7 +53,7 @@ const deleteClient = async (id) => {
 			method: "DELETE",
 		});
 	} catch (error) {
-		console.error("Error deleting client:", error);
+		console.error(`Error deleting client (id: ${id}):`, error);
 	}
 };
 export { fetchClients, fetchClient, addClient, updateClient, deleteClient };
