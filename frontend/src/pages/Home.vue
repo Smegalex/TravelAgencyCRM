@@ -3,10 +3,6 @@
 		<!-- Header -->
 		<header>
 			<CustomHeader active-page="home" />
-      <AuthorizationModal
-      :visible.sync="showAuthorizationModal"
-      activePage="home"
-    />
 		</header>
 		<!-- Main Content -->
 		<main>

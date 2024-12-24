@@ -1,5 +1,5 @@
 <script setup>
-import { defineEmits } from "vue";
+
 
 const { activePage = null } = defineProps({
 	activePage: {
@@ -8,11 +8,6 @@ const { activePage = null } = defineProps({
 	},
 });
 
-const emit = defineEmits(["showLoginDialog"]);
-
-const openLoginModal = () => {
-	emit("showLoginDialog");
-};
 </script>
 
 <template>
@@ -43,15 +38,23 @@ const openLoginModal = () => {
 						>Home</a
 					>
 				</li>
-				<!-- <li class="nav-item">
+				
+				<li class="nav-item">
+				<a class="nav-link" :href="activePage === 'login' ? '#' : '/login'">
+					Login
+				</a>
+				</li>
+				<li
+					class="nav-item"
+					:class="activePage === 'register' ? 'active' : ''"
+				>
 					<a
 						class="nav-link"
-						href="#"
-						@click.prevent="openLoginModal"
+						:href="activePage === 'register' ? '#' : '#'"
 					>
-						Login
+						Register
 					</a>
-				</li> -->
+				</li>
 				<li
 					class="nav-item"
 					:class="activePage === 'clients' ? 'active' : ''"
@@ -59,7 +62,7 @@ const openLoginModal = () => {
 					<a
 						class="nav-link"
 						:href="activePage === 'clients' ? '#' : '/clients'"
-						>Clients</a
+						>Clients panel</a
 					>
 				</li>
 				<li
@@ -69,7 +72,7 @@ const openLoginModal = () => {
 					<a
 						class="nav-link"
 						:href="activePage === 'trips' ? '#' : '/trips'"
-						>Trips</a
+						>Trips panel</a
 					>
 				</li>
 				<li
@@ -79,10 +82,21 @@ const openLoginModal = () => {
 					<a
 						class="nav-link"
 						:href="activePage === 'managers' ? '#' : '/managers'"
-						>Managers</a
+						>Managers panel</a
+					>
+				</li>
+				<li class="nav-item">
+					<a
+						class="nav-link"
+						href="#"
+						data-toggle="modal"
+						data-target="#faqModal"
+						>FAQ</a
 					>
 				</li>
 			</ul>
 		</div>
 	</nav>
 </template>
+
+
