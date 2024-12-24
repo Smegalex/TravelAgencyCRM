@@ -22,32 +22,35 @@ const managerFormResolver = ref(
 	yupResolver(
 		yup.object().shape({
 			name: yup
-				  .string()
-				  .required("Name is required.")
-				  .max(255, "Name too long."),
+				.string()
+				.required("Name is required.")
+				.max(255, "Name too long."),
 			surname: yup
-				  .string()
-				  .required("Surname is required.")
-				  .max(255, "Surname too long."),
-      email: yup
+				.string()
+				.max(255, "Surname too long."),
+			email: yup
 				.string()
 				.email("Invalid email format")
 				.required("Email is required.")
 				.max(50, "Email too long. Contact IT."),
-      adminRights: yup
-          .bool()
-          .required("Rights are required."),
-      password: yup
-          .string()
-          .required("Password is required.")
-          .max(255, "Password too long."),
+			adminRights: yup.bool(),
+			password: yup
+				.string()
+				.required("Password is required.")
+				.max(255, "Password too long."),
 		})
 	)
 );
 
 // create new manager
 const showCreateManagerForm = ref(false);
-const newManager = ref({ name: "", surname: "", email: "", adminRights: false, password: "" });
+const newManager = ref({
+	name: "",
+	surname: "",
+	email: "",
+	adminRights: false,
+	password: "",
+});
 const createManagerFormFields = [
 	{
 		name: "name",
@@ -55,30 +58,30 @@ const createManagerFormFields = [
 		props: "",
 		type: "",
 	},
-  {
+	{
 		name: "surname",
-		placeholder: "Manager's surname*",
+		placeholder: "Manager's surname",
 		props: "",
 		type: "",
 	},
 	{
 		name: "email",
-		placeholder: "Manager's email",
+		placeholder: "Manager's email*",
 		props: "",
 		type: "",
 	},
 	{
-    name: "adminRights",
-    placeholder: "Manager's rights*",
-    props: "",
-    type: "checkbox", // змінили тип на checkbox
-  },
-  {
+		name: "adminRights",
+		placeholder: "Admin rights",
+		props: "",
+		type: "checkbox", // змінили тип на checkbox
+	},
+	{
 		name: "password",
 		placeholder: "Manager's password*",
 		props: "",
 		type: "",
-	}
+	},
 ];
 
 const addManager = async ({ valid }) => {
@@ -93,7 +96,13 @@ const addManager = async ({ valid }) => {
 			});
 			const addedManager = await response.json();
 			managers.value.push(addedManager); // Add new student to local list
-			newManager.value = { name: "", surname: "", email: "", adminRights: false, password: ""}; // Reset form fields
+			newManager.value = {
+				name: "",
+				surname: "",
+				email: "",
+				adminRights: false,
+				password: "",
+			}; // Reset form fields
 			showCreateManagerForm.value = false;
 		} catch (error) {
 			console.error("Error adding manager:", error);
@@ -116,30 +125,30 @@ const editManagerFormFields = [
 		props: "",
 		type: "",
 	},
-  {
+	{
 		name: "surname",
-		placeholder: "Manager's surname*",
+		placeholder: "Manager's surname",
 		props: "",
 		type: "",
 	},
 	{
 		name: "email",
-		placeholder: "Manager's email",
+		placeholder: "Manager's email*",
 		props: "",
 		type: "",
 	},
 	{
-    name: "adminRights",
-    placeholder: "Manager's rights*",
-    props: "",
-    type: "checkbox", // змінили тип на checkbox
-  },
-  {
+		name: "adminRights",
+		placeholder: "Admin rights",
+		props: "",
+		type: "checkbox", // змінили тип на checkbox
+	},
+	{
 		name: "password",
 		placeholder: "Manager's password*",
 		props: "",
 		type: "",
-	}
+	},
 ];
 
 const changeEditFormVisibility = () => {
@@ -204,215 +213,133 @@ onMounted(() => {
 	fetchmanagers();
 });
 </script>
-<<template>
-  <div id="page-wrapper" style="overflow-y: scroll; height: 100vh">
-    <!-- Header -->
-    <header>
-      <CustomHeader active-page="managers" />
-    </header>
-    <main>
-      <div class="managers-table">
-        <div class="button-container">
-          <Button
-            pButton
-            label="Add New Manager"
-            icon="pi pi-plus"
-            class="p-button-primary p-mb-3"
-            @click="showCreateManagerForm = true"
-          ></Button>
-        </div>
-        <DataTable
-          :value="managers"
-          :rows="5"
-          paginator
-          paginatorPosition="bottom"
-          class="p-datatable-gridlines"
-          :rowsPerPageOptions="[5, 10, 20]"
-        >
-          <Column
-            field="id"
-            header="ID"
-            :sortable="true"
-            style="width: 5%"
-          ></Column>
-          <Column
-            field="name"
-            header="Name"
-            :sortable="true"
-            style="width: 15%"
-          ></Column>
-          <Column
-            field="surname"
-            header="Place ID"
-            :sortable="true"
-            style="width: 15%"
-          ></Column>
-          <Column
-            field="email"
-            header="Email"
-            :sortable="true"
-            style="width: 35%"
-          ></Column>
-          <!-- Замінили текстове поле на чекбокс -->
-          <Column
-            class="text-center"
-            field="adminRights"
-            header="Admin rights"
-            :sortable="true"
-            style="width: 5%"
-          >
-            <template #body="{ data }">
-             <span :class="data.adminRights ? 'pi pi-check text-success' : 'pi pi-times text-danger'" class="p-mr-2 text-3xl font-bold" ></span>
-            </template>
-          </Column>
-          <Column
-            field="password"
-            header="Password"
-            :sortable="true"
-            style="width: 13%"
-          ></Column>
+<
+<template>
+	<div id="page-wrapper" style="overflow-y: scroll; height: 100vh">
+		<!-- Header -->
+		<header>
+			<CustomHeader active-page="managers" />
+		</header>
+		<main>
+			<div class="managers-table">
+				<div class="button-container">
+					<Button
+						pButton
+						label="Add New Manager"
+						icon="pi pi-plus"
+						class="p-button-primary p-mb-3"
+						@click="showCreateManagerForm = true"
+					></Button>
+				</div>
+				<DataTable
+					:value="managers"
+					:rows="5"
+					paginator
+					paginatorPosition="bottom"
+					class="p-datatable-gridlines"
+					:rowsPerPageOptions="[5, 10, 20]"
+				>
+					<Column
+						field="id"
+						header="ID"
+						:sortable="true"
+						style="width: 5%"
+					></Column>
+					<Column
+						field="name"
+						header="Name"
+						:sortable="true"
+						style="width: 15%"
+					></Column>
+					<Column
+						field="surname"
+						header="Place ID"
+						:sortable="true"
+						style="width: 15%"
+					></Column>
+					<Column
+						field="email"
+						header="Email"
+						:sortable="true"
+						style="width: 35%"
+					></Column>
+					<!-- Замінили текстове поле на чекбокс -->
+					<Column
+						class="text-center"
+						field="adminRights"
+						header="Admin rights"
+						:sortable="true"
+						style="width: 5%"
+					>
+						<template #body="{ data }">
+							<span
+								:class="
+									data.adminRights
+										? 'pi pi-check text-success'
+										: 'pi pi-times text-danger'
+								"
+								class="p-mr-2 text-3xl font-bold"
+							></span>
+						</template>
+					</Column>
+					<Column
+						field="password"
+						header="Password"
+						:sortable="true"
+						style="width: 13%"
+					></Column>
 
-          <Column header="Actions" style="width: 10%">
-            <template #body="{ data }">
-              <Button
-                pButton
-                icon="pi pi-pencil"
-                class="p-button-text p-button-rounded"
-                title="Edit"
-                @click="editManagerTrigger(data.id)"
-              ></Button>
-              <Button
-                pButton
-                icon="pi pi-calendar-plus"
-                class="p-button-text p-button-rounded"
-                title="Add Booking"
-                @click="addBooking(data)"
-              ></Button>
-              <Button
-                pButton
-                icon="pi pi-trash"
-                class="p-button-text p-button-rounded"
-                title="Delete"
-                @click="deleteManager(data.id)"
-              ></Button>
-            </template>
-          </Column>
-        </DataTable>
-      </div>
-    </main>
-<UniversalModal
-    header="Create new manager"
-    :show-form="showCreateManagerForm"
-    @change-visibility="changeCreateFormVisibility"
-    :fields="createManagerFormFields"
-    :form-resolver="managerFormResolver"
-    :data="newManager"
-    :call-back="addManager"
-    submit-label="Create"
-  />
-  <UniversalModal
-    header="Edit manager"
-    :show-form="showEditManagerForm"
-    @change-visibility="changeEditFormVisibility"
-    :fields="editManagerFormFields"
-    :form-resolver="managerFormResolver"
-    :data="currentManager"
-    :call-back="editManager"
-    submit-label="Save"
-  />
+					<Column header="Actions" style="width: 10%">
+						<template #body="{ data }">
+							<Button
+								pButton
+								icon="pi pi-pencil"
+								class="p-button-text p-button-rounded"
+								title="Edit"
+								@click="editManagerTrigger(data.id)"
+							></Button>
+							<Button
+								pButton
+								icon="pi pi-calendar-plus"
+								class="p-button-text p-button-rounded"
+								title="Add Booking"
+								@click="addBooking(data)"
+							></Button>
+							<Button
+								pButton
+								icon="pi pi-trash"
+								class="p-button-text p-button-rounded"
+								title="Delete"
+								@click="deleteManager(data.id)"
+							></Button>
+						</template>
+					</Column>
+				</DataTable>
+			</div>
+		</main>
+		<UniversalModal
+			header="Create new manager"
+			:show-form="showCreateManagerForm"
+			@change-visibility="changeCreateFormVisibility"
+			:fields="createManagerFormFields"
+			:form-resolver="managerFormResolver"
+			:data="newManager"
+			:call-back="addManager"
+			submit-label="Create"
+		/>
+		<UniversalModal
+			header="Edit manager"
+			:show-form="showEditManagerForm"
+			@change-visibility="changeEditFormVisibility"
+			:fields="editManagerFormFields"
+			:form-resolver="managerFormResolver"
+			:data="currentManager"
+			:call-back="editManager"
+			submit-label="Save"
+		/>
 		<CustomFooter />
 	</div>
-
-	<!-- Модальне вікно Авторизації -->
-	<div
-		class="modal fade"
-		id="loginModal"
-		tabindex="-1"
-		role="dialog"
-		aria-labelledby="loginModalTitle"
-		aria-hidden="true"
-	>
-		<div class="modal-dialog" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="loginModalTitle">
-						Форма Авторизації
-					</h5>
-					<button
-						type="button"
-						class="close"
-						data-dismiss="modal"
-						aria-label="Close"
-					>
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body">
-					<form>
-						<div class="form-group">
-							<label for="emailLogin">Email</label>
-							<input
-								type="email"
-								class="form-control"
-								id="emailLogin"
-								placeholder="Enter email"
-							/>
-						</div>
-						<div class="form-group">
-							<label for="passwordLogin">Password</label>
-							<input
-								type="password"
-								class="form-control"
-								id="passwordLogin"
-								placeholder="Password"
-							/>
-						</div>
-						<button type="submit" class="btn btn-primary">
-							Login
-						</button>
-					</form>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<!-- Модальне вікно FAQ -->
-	<div
-		class="modal fade"
-		id="faqModal"
-		tabindex="-1"
-		role="dialog"
-		aria-labelledby="faqModalTitle"
-		aria-hidden="true"
-	>
-		<div class="modal-dialog" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="faqModalTitle">FAQ</h5>
-					<button
-						type="button"
-						class="close"
-						data-dismiss="modal"
-						aria-label="Close"
-					>
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body">
-					<p><strong>1. Як користуватися CRM?</strong></p>
-					<p>
-						Наша CRM розроблена для зручності управління клієнтами,
-						бронюванням та аналітикою в реальному часі.
-					</p>
-					<p><strong>2. Чи є підтримка клієнтів?</strong></p>
-					<p>
-						Так, наша підтримка клієнтів доступна 24/7 через телефон
-						або електронну пошту.
-					</p>
-				</div>
-			</div>
-		</div>
-	</div>
+	<!-- TODO: login -->
 </template>
 <style scoped>
 html,

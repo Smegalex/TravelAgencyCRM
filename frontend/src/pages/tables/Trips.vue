@@ -22,20 +22,20 @@ const tripFormResolver = ref(
 	yupResolver(
 		yup.object().shape({
 			name: yup
-				  .string()
-				  .required("Name is required.")
-				  .max(255, "Name too long."),
+				.string()
+				.required("Name is required.")
+				.max(255, "Name too long."),
 			idplace: yup
-          .number()
-				  .integer("Place ID must be an integer.")
-          .positive("Place ID must be a positive number.")
-          .required("Place ID is required."),
+				.number()
+				.integer("Place ID must be an integer.")
+				.positive("Place ID must be a positive number.")
+				.required("Place ID is required."),
 			season: yup
-          .number()
-          .integer("Season must be an integer.")
-          .min(1, "Season must be between 1 and 4.")
-				  .max(4, "Season must be between 1 and 4.")
-				  .required("Season is required."),
+				.number()
+				.integer("Season must be an integer.")
+				.min(1, "Season must be between 1 and 4.")
+				.max(4, "Season must be between 1 and 4.")
+				.required("Season is required."),
 		})
 	)
 );
@@ -138,16 +138,13 @@ const editTrip = async ({ valid }) => {
 	if (valid) {
 		try {
 			const id = currentTrip.value["id"];
-			const response = await fetch(
-				`http://127.0.0.1:5000/trips/${id}`,
-				{
-					method: "PUT",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify(currentTrip.value), // Directly use validated form values
-				}
-			);
+			const response = await fetch(`http://127.0.0.1:5000/trips/${id}`, {
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(currentTrip.value), // Directly use validated form values
+			});
 			const editedTrip = (await response.json())[0];
 
 			trips.value = trips.value.map((trip) =>
@@ -281,96 +278,7 @@ onMounted(() => {
 		<CustomFooter />
 	</div>
 
-	<!-- Модальне вікно Авторизації -->
-	<div
-		class="modal fade"
-		id="loginModal"
-		tabindex="-1"
-		role="dialog"
-		aria-labelledby="loginModalTitle"
-		aria-hidden="true"
-	>
-		<div class="modal-dialog" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="loginModalTitle">
-						Форма Авторизації
-					</h5>
-					<button
-						type="button"
-						class="close"
-						data-dismiss="modal"
-						aria-label="Close"
-					>
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body">
-					<form>
-						<div class="form-group">
-							<label for="emailLogin">Email</label>
-							<input
-								type="email"
-								class="form-control"
-								id="emailLogin"
-								placeholder="Enter email"
-							/>
-						</div>
-						<div class="form-group">
-							<label for="passwordLogin">Password</label>
-							<input
-								type="password"
-								class="form-control"
-								id="passwordLogin"
-								placeholder="Password"
-							/>
-						</div>
-						<button type="submit" class="btn btn-primary">
-							Login
-						</button>
-					</form>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<!-- Модальне вікно FAQ -->
-	<div
-		class="modal fade"
-		id="faqModal"
-		tabindex="-1"
-		role="dialog"
-		aria-labelledby="faqModalTitle"
-		aria-hidden="true"
-	>
-		<div class="modal-dialog" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="faqModalTitle">FAQ</h5>
-					<button
-						type="button"
-						class="close"
-						data-dismiss="modal"
-						aria-label="Close"
-					>
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body">
-					<p><strong>1. Як користуватися CRM?</strong></p>
-					<p>
-						Наша CRM розроблена для зручності управління клієнтами,
-						бронюванням та аналітикою в реальному часі.
-					</p>
-					<p><strong>2. Чи є підтримка клієнтів?</strong></p>
-					<p>
-						Так, наша підтримка клієнтів доступна 24/7 через телефон
-						або електронну пошту.
-					</p>
-				</div>
-			</div>
-		</div>
-	</div>
+	<!-- TODO: login -->
 </template>
 <style scoped>
 html,

@@ -13,7 +13,6 @@ import { yupResolver } from "@primevue/forms/resolvers/yup";
 
 // Requests
 import {
-	fetchClient,
 	fetchClients,
 	addClient,
 	updateClient,
@@ -241,96 +240,7 @@ onMounted(() => {
 		<CustomFooter />
 	</div>
 
-	<!-- Модальне вікно Авторизації -->
-	<div
-		class="modal fade"
-		id="loginModal"
-		tabindex="-1"
-		role="dialog"
-		aria-labelledby="loginModalTitle"
-		aria-hidden="true"
-	>
-		<div class="modal-dialog" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="loginModalTitle">
-						Форма Авторизації
-					</h5>
-					<button
-						type="button"
-						class="close"
-						data-dismiss="modal"
-						aria-label="Close"
-					>
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body">
-					<form>
-						<div class="form-group">
-							<label for="emailLogin">Email</label>
-							<input
-								type="email"
-								class="form-control"
-								id="emailLogin"
-								placeholder="Enter email"
-							/>
-						</div>
-						<div class="form-group">
-							<label for="passwordLogin">Password</label>
-							<input
-								type="password"
-								class="form-control"
-								id="passwordLogin"
-								placeholder="Password"
-							/>
-						</div>
-						<button type="submit" class="btn btn-primary">
-							Login
-						</button>
-					</form>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<!-- Модальне вікно FAQ -->
-	<div
-		class="modal fade"
-		id="faqModal"
-		tabindex="-1"
-		role="dialog"
-		aria-labelledby="faqModalTitle"
-		aria-hidden="true"
-	>
-		<div class="modal-dialog" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="faqModalTitle">FAQ</h5>
-					<button
-						type="button"
-						class="close"
-						data-dismiss="modal"
-						aria-label="Close"
-					>
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body">
-					<p><strong>1. Як користуватися CRM?</strong></p>
-					<p>
-						Наша CRM розроблена для зручності управління клієнтами,
-						бронюванням та аналітикою в реальному часі.
-					</p>
-					<p><strong>2. Чи є підтримка клієнтів?</strong></p>
-					<p>
-						Так, наша підтримка клієнтів доступна 24/7 через телефон
-						або електронну пошту.
-					</p>
-				</div>
-			</div>
-		</div>
-	</div>
+	<!--TODO - login-->
 </template>
 <style scoped>
 html,

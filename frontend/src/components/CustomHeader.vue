@@ -46,23 +46,12 @@ const { activePage = null } = defineProps({
 				</li>
 				<li
 					class="nav-item"
-					:class="activePage === 'register' ? 'active' : ''"
-				>
-					<a
-						class="nav-link"
-						:href="activePage === 'register' ? '#' : '#'"
-					>
-						Register
-					</a>
-				</li>
-				<li
-					class="nav-item"
 					:class="activePage === 'clients' ? 'active' : ''"
 				>
 					<a
 						class="nav-link"
 						:href="activePage === 'clients' ? '#' : '/clients'"
-						>Clients panel</a
+						>Clients</a
 					>
 				</li>
 				<li
@@ -72,7 +61,7 @@ const { activePage = null } = defineProps({
 					<a
 						class="nav-link"
 						:href="activePage === 'trips' ? '#' : '/trips'"
-						>Trips panel</a
+						>Trips</a
 					>
 				</li>
 				<li
@@ -82,16 +71,7 @@ const { activePage = null } = defineProps({
 					<a
 						class="nav-link"
 						:href="activePage === 'managers' ? '#' : '/managers'"
-						>Managers panel</a
-					>
-				</li>
-				<li class="nav-item">
-					<a
-						class="nav-link"
-						href="#"
-						data-toggle="modal"
-						data-target="#faqModal"
-						>FAQ</a
+						>Managers</a
 					>
 				</li>
 			</ul>
