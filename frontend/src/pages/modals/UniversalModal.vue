@@ -8,6 +8,7 @@ const {
 	callBack,
 	submitLabel = "Submit",
 	submitButtonType = "p-button-primary",
+	options,
 } = defineProps({
 	showForm: {
 		type: Boolean,
@@ -41,9 +42,13 @@ const {
 		type: String,
 		required: false,
 	},
+	options: {
+		type: Object,
+		required: false,
+	},
 });
 
-console.log(data);
+console.log(options);
 </script>
 
 <template>
@@ -57,7 +62,7 @@ console.log(data);
 	>
 		<Form
 			v-slot="$form"
-			class="form-container flex flex-column gap-3"
+			class="form-container flex flex-column gap-3 pt-2"
 			:model="data"
 			:resolver="formResolver"
 			:initial-values="data"
@@ -66,18 +71,38 @@ console.log(data);
 			<div
 				v-for="field in fields"
 				:key="field.name"
-				class="p-field flex flex-column"
+				class="p-field flex flex-column z-1"
 			>
-				<InputText
-					:name="field.name"
-					v-bind="field.props"
-					v-model="data[field.name]"
-					v-if="field.type === 'inputText' || !field.type"
-					:placeholder="field.placeholder"
-					:model-value="data[field.name]"
-					class="mb-0"
-					fluid
-				/>
+				<FloatLabel
+					variant="on"
+					v-if="
+						field.type === 'inputText' ||
+						!field.type ||
+						field.type === 'select'
+					"
+				>
+					<InputText
+						:name="field.name"
+						:id="field.name"
+						v-bind="field.props"
+						v-model="data[field.name]"
+						:model-value="data[field.name]"
+						v-if="field.type === 'inputText' || !field.type"
+						class="mb-0"
+						fluid
+					/>
+					<Select
+						:name="field.name"
+						:id="field.name"
+						v-bind="field.props"
+						v-model="data[field.name]"
+						:model-value="data[field.name]"
+						v-if="field.type === 'select'"
+						:options="options[field.name]"
+						class="w-full mb-0"
+					/>
+					<label :for="field.name">{{ field.placeholder }}</label>
+				</FloatLabel>
 				<div
 					class="flex items-center gap-2"
 					v-if="field.type === 'checkbox'"
@@ -88,6 +113,7 @@ console.log(data);
 						v-model="data[field.name]"
 						:inputId="field.name"
 						binary
+						class="mb-0"
 					></Checkbox>
 					<label :for="field.name"> {{ field.placeholder }} </label>
 				</div>
