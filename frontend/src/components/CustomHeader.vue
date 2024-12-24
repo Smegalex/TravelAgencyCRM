@@ -8,11 +8,7 @@ defineProps({
   },
 });
 
-const emit = defineEmits(["showLoginDialog"]);
 
-const openLoginModal = () => {
-  emit("showLoginDialog");
-};
 </script>
 
 <template>
@@ -38,29 +34,15 @@ const openLoginModal = () => {
         </li>
         <li class="nav-item">
           <!-- Викликаємо openLoginModal замість data-toggle -->
-          <a class="nav-link" href="#" @click.prevent="openLoginModal">
+          <a class="nav-link" :href="activePage === 'login' ? '#' : '/login'">
             Login
           </a>
         </li>
-        <li class="nav-item" :class="activePage === 'register' ? 'active' : ''">
-  <a class="nav-link" :href="activePage === 'register' ? '#' : '#'">
-    Register
-  </a>
-</li>
         <li class="nav-item" :class="activePage === 'clients' ? 'active' : ''">
           <a
             class="nav-link"
             :href="activePage === 'clients' ? '#' : '/clients'"
             >Clients panel</a
-          >
-        </li>
-        <li class="nav-item">
-          <a
-            class="nav-link"
-            href="#"
-            data-toggle="modal"
-            data-target="#faqModal"
-            >FAQ</a
           >
         </li>
          <li class="nav-item" :class="activePage === 'trips' ? 'active' : ''">
@@ -70,29 +52,11 @@ const openLoginModal = () => {
             >Trips panel</a
           >
         </li>
-        <li class="nav-item">
-          <a
-            class="nav-link"
-            href="#"
-            data-toggle="modal"
-            data-target="#faqModal"
-            >FAQ</a
-          >
-        </li>
         <li class="nav-item" :class="activePage === 'managers' ? 'active' : ''">
           <a
             class="nav-link"
             :href="activePage === 'managers' ? '#' : '/managers'"
             >Managers panel</a
-          >
-        </li>
-        <li class="nav-item">
-          <a
-            class="nav-link"
-            href="#"
-            data-toggle="modal"
-            data-target="#faqModal"
-            >FAQ</a
           >
         </li>
       </ul>
