@@ -43,8 +43,7 @@ const openLoginModal = () => {
 						>Home</a
 					>
 				</li>
-				<li class="nav-item">
-					<!-- Викликаємо openLoginModal замість data-toggle -->
+				<!-- <li class="nav-item">
 					<a
 						class="nav-link"
 						href="#"
@@ -52,18 +51,7 @@ const openLoginModal = () => {
 					>
 						Login
 					</a>
-				</li>
-				<li
-					class="nav-item"
-					:class="activePage === 'register' ? 'active' : ''"
-				>
-					<a
-						class="nav-link"
-						:href="activePage === 'register' ? '#' : '#'"
-					>
-						Register
-					</a>
-				</li>
+				</li> -->
 				<li
 					class="nav-item"
 					:class="activePage === 'clients' ? 'active' : ''"
@@ -71,7 +59,7 @@ const openLoginModal = () => {
 					<a
 						class="nav-link"
 						:href="activePage === 'clients' ? '#' : '/clients'"
-						>Clients panel</a
+						>Clients</a
 					>
 				</li>
 				<li
@@ -81,7 +69,7 @@ const openLoginModal = () => {
 					<a
 						class="nav-link"
 						:href="activePage === 'trips' ? '#' : '/trips'"
-						>Trips panel</a
+						>Trips</a
 					>
 				</li>
 				<li
@@ -91,16 +79,7 @@ const openLoginModal = () => {
 					<a
 						class="nav-link"
 						:href="activePage === 'managers' ? '#' : '/managers'"
-						>Managers panel</a
-					>
-				</li>
-				<li class="nav-item">
-					<a
-						class="nav-link"
-						href="#"
-						data-toggle="modal"
-						data-target="#faqModal"
-						>FAQ</a
+						>Managers</a
 					>
 				</li>
 			</ul>
