@@ -1,13 +1,12 @@
 <script setup>
-import { defineEmits } from "vue";
 
-defineProps({
-  activePage: {
-    type: String,
-    required: true,
-  },
+
+const { activePage = null } = defineProps({
+	activePage: {
+		type: String,
+		required: false,
+	},
 });
-
 
 </script>
 
@@ -62,4 +61,7 @@ defineProps({
       </ul>
     </div>
   </nav>
+
 </template>
+
+

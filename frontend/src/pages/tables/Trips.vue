@@ -176,7 +176,7 @@ onMounted(() => {
 });
 </script>
 <template>
-	<div id="page-wrapper" style="overflow-y: scroll; height: 100vh">
+	<div id="page-wrapper" class="h-screen overflow-y-scroll flex flex-column">
 		<!-- Header -->
 		<header>
 			<CustomHeader active-page="trips" />
@@ -188,7 +188,7 @@ onMounted(() => {
 						pButton
 						label="Add New Trip"
 						icon="pi pi-plus"
-						class="p-button-primary p-mb-3"
+						class="p-mb-3"
 						@click="showCreateTripForm = true"
 					></Button>
 				</div>
@@ -231,21 +231,25 @@ onMounted(() => {
 							<Button
 								pButton
 								icon="pi pi-pencil"
-								class="p-button-text p-button-rounded"
+								rounded
+								variant="text"
 								title="Edit"
 								@click="editTripTrigger(data.id)"
 							></Button>
 							<Button
 								pButton
 								icon="pi pi-calendar-plus"
-								class="p-button-text p-button-rounded"
+								rounded
+								variant="text"
 								title="Add Booking"
 								@click="addBooking(data)"
 							></Button>
 							<Button
 								pButton
 								icon="pi pi-trash"
-								class="p-button-text p-button-rounded"
+								severity="danger"
+								rounded
+								variant="text"
 								title="Delete"
 								@click="deleteTrip(data.id)"
 							></Button>
@@ -379,11 +383,6 @@ body {
 	flex-direction: column;
 	padding: 1rem;
 	gap: 0.5rem;
-}
-#page-wrapper {
-	display: flex;
-	flex-direction: column;
-	min-height: 100vh;
 }
 
 main {

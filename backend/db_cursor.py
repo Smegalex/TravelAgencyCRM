@@ -28,7 +28,7 @@ def select_records(table_name, record_id=None, where=None):
 
         # Створюємо основний SQL запит
         sql_query = f"SELECT * FROM {table_name}"
-        
+        params = {}
         # Якщо передано id, додаємо умову для вибірки по id
         if record_id is not None:
             sql_query += f" WHERE id = :id"
@@ -37,10 +37,9 @@ def select_records(table_name, record_id=None, where=None):
             # Якщо передано where, додаємо його до умови
             sql_query += f" WHERE {where}"
             params = {}
-        else:
-            # Якщо id та where не передано, вибираємо всі записи
-            sql_query += " ORDER BY id ASC"
-            params = {}
+
+        # Якщо id та where не передано, вибираємо всі записи
+        sql_query += " ORDER BY id ASC"
 
         # Виконуємо запит
         cursor.execute(sql_query, params)
@@ -253,4 +252,3 @@ def check_user_credentials(email, password):
             cursor.close()
         if conn:
             conn.close()
-
