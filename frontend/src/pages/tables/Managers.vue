@@ -25,9 +25,7 @@ const managerFormResolver = ref(
 				.string()
 				.required("Name is required.")
 				.max(255, "Name too long."),
-			surname: yup
-				.string()
-				.max(255, "Surname too long."),
+			surname: yup.string().max(255, "Surname too long."),
 			email: yup
 				.string()
 				.email("Invalid email format")
@@ -51,7 +49,7 @@ const newManager = ref({
 	adminRights: false,
 	password: "",
 });
-const createManagerFormFields = [
+const managerFormFields = [
 	{
 		name: "name",
 		placeholder: "Manager's name*",
@@ -118,38 +116,6 @@ const changeCreateFormVisibility = () => {
 const currentManager = ref([]);
 const showEditManagerForm = ref(false);
 
-const editManagerFormFields = [
-	{
-		name: "name",
-		placeholder: "Manager's name*",
-		props: "",
-		type: "",
-	},
-	{
-		name: "surname",
-		placeholder: "Manager's surname",
-		props: "",
-		type: "",
-	},
-	{
-		name: "email",
-		placeholder: "Manager's email*",
-		props: "",
-		type: "",
-	},
-	{
-		name: "adminRights",
-		placeholder: "Admin rights",
-		props: "",
-		type: "checkbox", // змінили тип на checkbox
-	},
-	{
-		name: "password",
-		placeholder: "Manager's password*",
-		props: "",
-		type: "",
-	},
-];
 
 const changeEditFormVisibility = () => {
 	showEditManagerForm.value = !showEditManagerForm.value;
@@ -222,15 +188,7 @@ onMounted(() => {
 		</header>
 		<main>
 			<div class="managers-table">
-				<div class="button-container">
-					<Button
-						pButton
-						label="Add New Manager"
-						icon="pi pi-plus"
-						class="p-button-primary p-mb-3"
-						@click="showCreateManagerForm = true"
-					></Button>
-				</div>
+				<div class="button-container"></div>
 				<DataTable
 					:value="managers"
 					:rows="5"
@@ -238,7 +196,22 @@ onMounted(() => {
 					paginatorPosition="bottom"
 					class="p-datatable-gridlines"
 					:rowsPerPageOptions="[5, 10, 20]"
-				>
+					><template #header>
+						<div
+							class="flex flex-wrap items-center justify-content-between gap-2"
+						>
+							<span class="text-3xl font-bold">
+								Managers table
+							</span>
+							<Button
+								pButton
+								label="Add New Manager"
+								icon="pi pi-plus"
+								class="p-button-primary p-mb-3"
+								@click="showCreateManagerForm = true"
+							/>
+						</div>
+					</template>
 					<Column
 						field="id"
 						header="ID"
@@ -261,7 +234,7 @@ onMounted(() => {
 						field="email"
 						header="Email"
 						:sortable="true"
-						style="width: 35%"
+						style="width: 28%"
 					></Column>
 					<!-- Замінили текстове поле на чекбокс -->
 					<Column
@@ -286,10 +259,10 @@ onMounted(() => {
 						field="password"
 						header="Password"
 						:sortable="true"
-						style="width: 13%"
+						style="width: 15%"
 					></Column>
 
-					<Column header="Actions" style="width: 10%">
+					<Column header="Actions" style="width: 17%" class="text-center">
 						<template #body="{ data }">
 							<Button
 								pButton
@@ -310,6 +283,7 @@ onMounted(() => {
 								icon="pi pi-trash"
 								class="p-button-text p-button-rounded"
 								title="Delete"
+								severity="danger"
 								@click="deleteManager(data.id)"
 							></Button>
 						</template>
@@ -321,7 +295,7 @@ onMounted(() => {
 			header="Create new manager"
 			:show-form="showCreateManagerForm"
 			@change-visibility="changeCreateFormVisibility"
-			:fields="createManagerFormFields"
+			:fields="managerFormFields"
 			:form-resolver="managerFormResolver"
 			:data="newManager"
 			:call-back="addManager"
@@ -331,7 +305,7 @@ onMounted(() => {
 			header="Edit manager"
 			:show-form="showEditManagerForm"
 			@change-visibility="changeEditFormVisibility"
-			:fields="editManagerFormFields"
+			:fields="managerFormFields"
 			:form-resolver="managerFormResolver"
 			:data="currentManager"
 			:call-back="editManager"

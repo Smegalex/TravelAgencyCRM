@@ -1,6 +1,7 @@
 <script setup>
 // Vue
 import { ref, onMounted } from "vue";
+import { useToast, useConfirm } from "primevue";
 
 // Router
 import { useRouter } from "vue-router";
@@ -20,6 +21,8 @@ import * as yup from "yup";
 import { yupResolver } from "@primevue/forms/resolvers/yup";
 
 const router = useRouter();
+const confirm = useConfirm();
+const toast = useToast();
 
 const { id } = defineProps({
 	id: {
@@ -73,33 +76,76 @@ const getBookings = async () => {
 };
 
 const getClient = async () => {
-	client.value = await fetchClient(id);
-	await getBookings();
+	try {
+		client.value = await fetchClient(id);
+		await getBookings();
+	} catch (error) {
+		toast.add({
+			severity: "error",
+			summary: "Error",
+			detail: error,
+			life: 2000,
+		});
+	}
 };
 
 const removeClient = async () => {
-	await deleteClient(id);
-	router.push("/clients");
+	confirm.require({
+		message: "Are you sure you want to delete this record?",
+		header: "Delete",
+		icon: "pi pi-exclamation-circle",
+		rejectLabel: "Cancel",
+		rejectProps: {
+			label: "Cancel",
+			severity: "secondary",
+			outlined: true,
+		},
+		acceptProps: {
+			label: "Delete",
+			severity: "danger",
+		},
+		accept: async () => {
+			await deleteClient(id);
+			router.push("/clients");
+		},
+	});
 };
 
 const saveChanges = async ({ valid }) => {
 	// console.log(client.value);
 	// console.log(valid);
 	if (valid) {
-		await updateClient(client.value);
-		editClient.value = false;
+		try {
+			await updateClient(client.value);
+			editClient.value = false;
+			toast.add({
+				severity: "success",
+				summary: "Successful",
+				detail: "Record edited.",
+				life: 2000,
+			});
+		} catch (error) {
+			toast.add({
+				severity: "error",
+				summary: "Error",
+				detail: error,
+				life: 2000,
+			});
+		}
 	}
 };
 
 const changeBookings = (newBookings) => {
 	bookings.value = newBookings;
-}
+};
 
 onMounted(getClient);
 </script>
 
 <template>
 	<div id="page-wrapper" class="h-screen overflow-y-scroll flex flex-column">
+		<ConfirmDialog></ConfirmDialog>
+		<Toast />
 		<!-- Header -->
 		<header>
 			<CustomHeader />
@@ -230,7 +276,11 @@ onMounted(getClient);
 					:size="75"
 					:minSize="65"
 				>
-					<ClientViewTable :bookings="bookings" :change-bookings="changeBookings" :idclient="id"/>
+					<ClientViewTable
+						:bookings="bookings"
+						:change-bookings="changeBookings"
+						:idclient="id"
+					/>
 				</SplitterPanel>
 			</Splitter>
 		</main>

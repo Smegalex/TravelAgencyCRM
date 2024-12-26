@@ -48,7 +48,7 @@ const {
 	},
 });
 
-console.log(options);
+// console.log(data);
 </script>
 
 <template>
@@ -71,7 +71,7 @@ console.log(options);
 			<div
 				v-for="field in fields"
 				:key="field.name"
-				class="p-field flex flex-column z-1"
+				class="p-field flex flex-column"
 			>
 				<FloatLabel
 					variant="on"

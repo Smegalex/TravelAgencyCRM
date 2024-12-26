@@ -1,7 +1,15 @@
 <script setup>
+// Vue
 import { ref, onMounted } from "vue";
+
+// Primeflex
+import { useToast, useConfirm } from "primevue";
+
+// Yup
 import * as yup from "yup";
 import { yupResolver } from "@primevue/forms/resolvers/yup";
+
+// Requests
 import { fetchManagers, fetchManager } from "@/requests/managersRequests";
 import { fetchTrips, fetchTrip } from "@/requests/tripsRequests";
 import {
@@ -9,6 +17,13 @@ import {
 	updateBooking,
 	deleteBooking,
 } from "@/requests/bookingsRequests";
+
+import { useMainStore } from "@/stores/mainStore";
+
+const store = useMainStore();
+const confirm = useConfirm();
+const toast = useToast();
+const currentManagerId = store.getId;
 
 const { bookings, changeBookings, idclient } = defineProps({
 	bookings: {
@@ -51,7 +66,7 @@ const seasons = ["Winter", "Spring", "Summer", "Autumn"];
 const showCreateBookingForm = ref(false);
 const newBooking = ref({
 	idclient: idclient,
-	idmanager: null,
+	idmanager: currentManagerId || null,
 	idtrip: null,
 	people_amount: 1,
 });
@@ -98,26 +113,41 @@ const bookingFormSelectOptions = ref({});
 
 const createBooking = async ({ valid }) => {
 	if (valid) {
-		let addedBooking = await addBooking(newBooking.value);
-		const manager = await fetchManager(addedBooking["idmanager"]);
-		const trip = await fetchTrip(addedBooking["idtrip"]);
-		addedBooking = {
-			id: addedBooking["id"],
-			idclient: idclient,
-			idmanager: addedBooking["idmanager"],
-			manager: manager,
-			idtrip: addedBooking["idtrip"],
-			trip: trip,
-			people_amount: addedBooking["people_amount"],
-		};
-		bookings.push(addedBooking); // Add new student to local list
-		newBooking.value = {
-			idclient: idclient,
-			idmanager: null,
-			idtrip: null,
-			people_amount: 1,
-		}; // Reset form fields
-		showCreateBookingForm.value = false;
+		try {
+			let addedBooking = await addBooking(newBooking.value);
+			const manager = await fetchManager(addedBooking["idmanager"]);
+			const trip = await fetchTrip(addedBooking["idtrip"]);
+			addedBooking = {
+				id: addedBooking["id"],
+				idclient: idclient,
+				idmanager: addedBooking["idmanager"],
+				manager: manager,
+				idtrip: addedBooking["idtrip"],
+				trip: trip,
+				people_amount: addedBooking["people_amount"],
+			};
+			bookings.push(addedBooking); // Add new student to local list
+			newBooking.value = {
+				idclient: idclient,
+				idmanager: currentManagerId.value || null,
+				idtrip: null,
+				people_amount: 1,
+			}; // Reset form fields
+			showCreateBookingForm.value = false;
+			toast.add({
+				severity: "success",
+				summary: "Successful",
+				detail: "Record created.",
+				life: 2000,
+			});
+		} catch (error) {
+			toast.add({
+				severity: "error",
+				summary: "Error",
+				detail: error,
+				life: 2000,
+			});
+		}
 	}
 };
 
@@ -142,40 +172,96 @@ const editBookingTrigger = async (id) => {
 
 const editBooking = async ({ valid }) => {
 	if (valid) {
-		let editedBooking = await updateBooking(currentBooking.value);
-		const manager = await fetchManager(editedBooking["idmanager"]);
-		const trip = await fetchTrip(editedBooking["idtrip"]);
-		editedBooking = {
-			id: editedBooking["id"],
-			idclient: idclient,
-			idmanager: editedBooking["idmanager"],
-			manager: manager,
-			idtrip: editedBooking["idtrip"],
-			trip: trip,
-			people_amount: editedBooking["people_amount"],
-		};
-		changeBookings(
-			bookings.map((booking) =>
-				booking.id == editedBooking.id ? editedBooking : booking
-			)
-		);
-		showEditBookingForm.value = false;
+		try {
+			let editedBooking = await updateBooking(currentBooking.value);
+			const manager = await fetchManager(editedBooking["idmanager"]);
+			const trip = await fetchTrip(editedBooking["idtrip"]);
+			editedBooking = {
+				id: editedBooking["id"],
+				idclient: idclient,
+				idmanager: editedBooking["idmanager"],
+				manager: manager,
+				idtrip: editedBooking["idtrip"],
+				trip: trip,
+				people_amount: editedBooking["people_amount"],
+			};
+			changeBookings(
+				bookings.map((booking) =>
+					booking.id == editedBooking.id ? editedBooking : booking
+				)
+			);
+			showEditBookingForm.value = false;
+			toast.add({
+				severity: "success",
+				summary: "Successful",
+				detail: "Record edited.",
+				life: 2000,
+			});
+		} catch (error) {
+			toast.add({
+				severity: "error",
+				summary: "Error",
+				detail: error,
+				life: 2000,
+			});
+		}
 	}
 };
 
 const removeBooking = async (id) => {
-	await deleteBooking(id);
-	changeBookings(bookings.filter((booking) => booking.id !== id)); // Update local list
+	confirm.require({
+		message: "Are you sure you want to delete this record?",
+		header: "Delete",
+		icon: "pi pi-exclamation-circle",
+		rejectLabel: "Cancel",
+		rejectProps: {
+			label: "Cancel",
+			severity: "secondary",
+			outlined: true,
+		},
+		acceptProps: {
+			label: "Delete",
+			severity: "danger",
+		},
+		accept: async () => {
+			try {
+				await deleteBooking(id);
+				changeBookings(bookings.filter((booking) => booking.id !== id)); // Update local list
+				toast.add({
+					severity: "info",
+					summary: "Successful",
+					detail: "Record deleted",
+					life: 2000,
+				});
+			} catch (error) {
+				toast.add({
+					severity: "error",
+					summary: "Error",
+					detail: error,
+					life: 2000,
+				});
+			}
+		},
+	});
 };
 
 const initialize = async () => {
-	managers.value = await fetchManagers();
-	trips.value = await fetchTrips();
-	bookingFormSelectOptions.value = {
-		idmanager: managers.value,
-		idtrip: trips.value,
-	};
-	// console.log(bookingFormSelectOptions);
+	try {
+		managers.value = await fetchManagers();
+		trips.value = await fetchTrips();
+		bookingFormSelectOptions.value = {
+			idmanager: managers.value,
+			idtrip: trips.value,
+		};
+		// console.log(bookingFormSelectOptions);
+	} catch (error) {
+		toast.add({
+			severity: "error",
+			summary: "Error",
+			detail: error,
+			life: 2000,
+		});
+	}
 };
 
 onMounted(initialize);

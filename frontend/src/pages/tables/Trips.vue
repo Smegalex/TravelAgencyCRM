@@ -5,18 +5,23 @@ import UniversalModal from "../modals/UniversalModal.vue";
 import { ref, onMounted } from "vue";
 import * as yup from "yup";
 import { yupResolver } from "@primevue/forms/resolvers/yup";
+import { fetchPlace, fetchPlaces } from "@/requests/placesRequests";
+import {
+	fetchTrips,
+	fetchTrip,
+	addTrip,
+	updateTrip,
+} from "@/requests/tripsRequests";
+import { icon } from "@fortawesome/fontawesome-svg-core";
 
 const trips = ref([]);
-
-const fetchtrips = async () => {
-	try {
-		const response = await fetch("http://127.0.0.1:5000/trips");
-		trips.value = await response.json(); // Зберігаємо відповідь у реактивну змінну
-		// console.log(trips.value);
-	} catch (error) {
-		console.error("Error fetching trips:", error);
-	}
-};
+const places = ref([]);
+const seasonsSelect = [
+	{ name: "Winter", number: 1 },
+	{ name: "Spring", number: 2 },
+	{ name: "Summer", number: 3 },
+	{ name: "Autumn", number: 4 },
+];
 
 const tripFormResolver = ref(
 	yupResolver(
@@ -40,10 +45,20 @@ const tripFormResolver = ref(
 	)
 );
 
+const getTrips = async () => {
+	const tripsRaw = await fetchTrips();
+	for (let i = 0; i < tripsRaw.length; i++) {
+		let trip = tripsRaw[i];
+		const place = await fetchPlace(trip["idplace"]);
+		trip["place"] = place;
+		trips.value.push(trip);
+	}
+};
+
 // create new trip
 const showCreateTripForm = ref(false);
 const newTrip = ref({ name: "", idplace: "", season: "" });
-const createTripFormFields = [
+const tripFormFields = [
 	{
 		name: "name",
 		placeholder: "Trip's name*",
@@ -52,35 +67,39 @@ const createTripFormFields = [
 	},
 	{
 		name: "idplace",
-		placeholder: "Trip's idplace",
-		props: "",
-		type: "",
+		placeholder: "Place of trip*",
+		props: {
+			optionLabel: (place) => {
+				return place.name;
+			},
+			optionValue: "id",
+		},
+		type: "select",
 	},
 	{
 		name: "season",
-		placeholder: "Trip's season*",
-		props: "",
-		type: "",
+		placeholder: "Season of trip*",
+		props: {
+			optionLabel: (season) => {
+				return season.name;
+			},
+			optionValue: "number",
+		},
+		type: "select",
+		optionValue: "id",
 	},
 ];
 
-const addTrip = async ({ valid }) => {
+const tripFormSelectOptions = ref({});
+
+const createTrip = async ({ valid }) => {
 	if (valid) {
-		try {
-			const response = await fetch("http://localhost:5000/trips", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(newTrip.value), // Directly use validated form values
-			});
-			const addedTrip = await response.json();
-			trips.value.push(addedTrip); // Add new student to local list
-			newTrip.value = { name: "", idplace: "", season: "" }; // Reset form fields
-			showCreateTripForm.value = false;
-		} catch (error) {
-			console.error("Error adding trip:", error);
-		}
+		let addedTrip = await addTrip(newTrip.value);
+		const place = await fetchPlace(addedTrip["idplace"]);
+		addedTrip["place"] = place;
+		trips.value.push(addedTrip); // Add new student to local list
+		newTrip.value = { name: "", idplace: "", place: null, season: "" }; // Reset form fields
+		showCreateTripForm.value = false;
 	}
 };
 
@@ -92,68 +111,27 @@ const changeCreateFormVisibility = () => {
 const currentTrip = ref([]);
 const showEditTripForm = ref(false);
 
-const editTripFormFields = [
-	{
-		name: "name",
-		placeholder: "Trip's name*",
-		props: "",
-		type: "",
-	},
-	{
-		name: "idplace",
-		placeholder: "Trip's idplace",
-		props: "",
-		type: "",
-	},
-	{
-		name: "season",
-		placeholder: "Trip's season*",
-		props: "",
-		type: "",
-	},
-];
-
 const changeEditFormVisibility = () => {
 	showEditTripForm.value = !showEditTripForm.value;
 };
 
-const fetchTrip = async (id) => {
-	try {
-		const response = await fetch(`http://127.0.0.1:5000/trips/${id}`);
-		currentTrip.value = await response.json(); // Зберігаємо відповідь у реактивну змінну
-		currentTrip.value = currentTrip.value[0];
-		console.log(currentTrip.value);
-	} catch (error) {
-		console.error(`Error fetching trip (id: ${id}):`, error);
-	}
-};
-
 const editTripTrigger = async (id) => {
-	await fetchTrip(id);
+	currentTrip.value = await fetchTrip(id);
 	showEditTripForm.value = true;
-	console.log(currentTrip.value);
+	// console.log(currentTrip.value);
 };
 
 const editTrip = async ({ valid }) => {
 	if (valid) {
-		try {
-			const id = currentTrip.value["id"];
-			const response = await fetch(`http://127.0.0.1:5000/trips/${id}`, {
-				method: "PUT",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(currentTrip.value), // Directly use validated form values
-			});
-			const editedTrip = (await response.json())[0];
+		let editedTrip = updateTrip(currentTrip);
 
-			trips.value = trips.value.map((trip) =>
-				trip.id == editedTrip.id ? editedTrip : trip
-			);
-			showEditTripForm.value = false;
-		} catch (error) {
-			console.error("Error adding trip:", error);
-		}
+		const place = await fetchPlace(editedTrip["idplace"]);
+		editedTrip["place"] = place;
+
+		trips.value = trips.value.map((trip) =>
+			trip.id == editedTrip.id ? editedTrip : trip
+		);
+		showEditTripForm.value = false;
 	}
 };
 
@@ -164,12 +142,47 @@ const deleteTrip = async (id) => {
 		});
 		trips.value = trips.value.filter((trip) => trip.id !== id); // Update local list
 	} catch (error) {
-		console.error("Error deleting trip:", error);
+		console.error(`Error deleting trip (id: ${id}):`, error);
 	}
 };
 
+const seasonIconSelector = (season) => {
+	switch (season) {
+		case 1:
+			return "fa-regular fa-snowflake";
+		case 2:
+			return "fa-solid fa-seedling";
+		case 3:
+			return "fa-regular fa-sun";
+		case 4:
+			return "fa-brands fa-canadian-maple-leaf";
+	}
+};
+
+const seasonClassSelector = (season) => {
+	switch (season) {
+		case 1:
+			return "text-blue-400";
+		case 2:
+			return "text-green-500";
+		case 3:
+			return "text-yellow-500";
+		case 4:
+			return "text-orange-600";
+	}
+};
+
+const initialise = async () => {
+	await getTrips();
+	places.value = await fetchPlaces();
+	tripFormSelectOptions.value = {
+		idplace: places.value,
+		season: seasonsSelect,
+	};
+};
+
 onMounted(() => {
-	fetchtrips();
+	initialise();
 });
 </script>
 <template>
@@ -180,15 +193,6 @@ onMounted(() => {
 		</header>
 		<main>
 			<div class="trips-table">
-				<div class="button-container">
-					<Button
-						pButton
-						label="Add New Trip"
-						icon="pi pi-plus"
-						class="p-mb-3"
-						@click="showCreateTripForm = true"
-					></Button>
-				</div>
 				<DataTable
 					:value="trips"
 					:rows="5"
@@ -198,32 +202,59 @@ onMounted(() => {
 					striped-rows
 					:rowsPerPageOptions="[5, 10, 20]"
 				>
+					<template #header>
+						<div
+							class="flex flex-wrap items-center justify-content-between gap-2"
+						>
+						<span class="text-3xl font-bold">Trips table</span>
+							<Button
+								pButton
+								label="Add New Trip"
+								icon="pi pi-plus"
+								class="p-mb-3"
+								@click="showCreateTripForm = true"
+							/>
+						</div>
+					</template>
 					<Column
 						field="id"
 						header="ID"
 						:sortable="true"
-						style="width: 10%"
+						style="width: 11%"
 					></Column>
 					<Column
 						field="name"
 						header="Name"
 						:sortable="true"
-						style="width: 15%"
+						style="width: 31%"
 					></Column>
 					<Column
-						field="idplace"
-						header="Place ID"
+						field="place"
+						header="Place"
 						:sortable="true"
-						style="width: 20%"
-					></Column>
+						style="width: 31%"
+						><template #body="{ data }">
+							<span>{{ data.place.name }}</span>
+						</template></Column
+					>
 					<Column
 						field="season"
 						header="Season"
 						:sortable="true"
-						style="width: 40%"
-					></Column>
+						style="width: 11%"
+						class="text-center"
+					>
+						<template #body="{ data }">
+							<font-awesome-icon
+								:icon="seasonIconSelector(data.season)"
+								icon="fa-regular fa-snowflake"
+								class="text-2xl"
+								:class="seasonClassSelector(data.season)"
+							/>
+						</template>
+					</Column>
 
-					<Column header="Actions" style="width: 15%">
+					<Column header="Actions" style="width: 16%">
 						<template #body="{ data }">
 							<Button
 								pButton
@@ -235,7 +266,7 @@ onMounted(() => {
 							></Button>
 							<Button
 								pButton
-								icon="pi pi-calendar-plus"
+								icon="pi pi-external-link"
 								rounded
 								variant="text"
 								title="Add Booking"
@@ -259,20 +290,22 @@ onMounted(() => {
 			header="Create new trip"
 			:show-form="showCreateTripForm"
 			@change-visibility="changeCreateFormVisibility"
-			:fields="createTripFormFields"
+			:fields="tripFormFields"
 			:form-resolver="tripFormResolver"
 			:data="newTrip"
-			:call-back="addTrip"
+			:call-back="createTrip"
+			:options="tripFormSelectOptions"
 			submit-label="Create"
 		/>
 		<UniversalModal
 			header="Edit trip"
 			:show-form="showEditTripForm"
 			@change-visibility="changeEditFormVisibility"
-			:fields="editTripFormFields"
+			:fields="tripFormFields"
 			:form-resolver="tripFormResolver"
 			:data="currentTrip"
 			:call-back="editTrip"
+			:options="tripFormSelectOptions"
 			submit-label="Save"
 		/>
 		<CustomFooter />

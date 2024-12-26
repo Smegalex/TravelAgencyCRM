@@ -1,6 +1,7 @@
 <script setup>
 // Vue
 import { ref, onMounted } from "vue";
+import { useConfirm, useToast } from "primevue";
 
 // Components
 import CustomHeader from "@/components/CustomHeader.vue";
@@ -20,9 +21,20 @@ import {
 } from "@/requests/clientsRequests";
 
 const clients = ref([]);
+const confirm = useConfirm();
+const toast = useToast();
 
 const getClients = async () => {
-	clients.value = await fetchClients();
+	try {
+		clients.value = await fetchClients();
+	} catch (error) {
+		toast.add({
+			severity: "error",
+			summary: "Error",
+			detail: error,
+			life: 2000,
+		});
+	}
 };
 
 const clientFormResolver = ref(
@@ -68,10 +80,25 @@ const createClientFormFields = [
 
 const createClient = async ({ valid }) => {
 	if (valid) {
-		const addedClient = await addClient(newClient.value);
-		clients.value.push(addedClient); // Add new student to local list
-		newClient.value = { name: "", surname: null, email: "" }; // Reset form fields
-		showCreateClientForm.value = false;
+		try {
+			const addedClient = await addClient(newClient.value);
+			clients.value.push(addedClient); // Add new student to local list
+			newClient.value = { name: "", surname: null, email: "" }; // Reset form fields
+			showCreateClientForm.value = false;
+			toast.add({
+				severity: "success",
+				summary: "Successful",
+				detail: "Record created.",
+				life: 2000,
+			});
+		} catch (error) {
+			toast.add({
+				severity: "error",
+				summary: "Error",
+				detail: error,
+				life: 2000,
+			});
+		}
 	}
 };
 
@@ -109,24 +136,82 @@ const changeEditFormVisibility = () => {
 };
 
 const editClientTrigger = async (id) => {
-	currentClient.value = clients.value.find((client) => client.id === id);
-	showEditClientForm.value = true;
-	// console.log(currentClient.value);
+	try {
+		currentClient.value = clients.value.find((client) => client.id === id);
+		showEditClientForm.value = true;
+		// console.log(currentClient.value);
+	} catch (error) {
+		toast.add({
+			severity: "error",
+			summary: "Error",
+			detail: error,
+			life: 2000,
+		});
+	}
 };
 
 const editClient = async ({ valid }) => {
 	if (valid) {
-		const editedClient = await updateClient(currentClient.value);
-		clients.value = clients.value.map((client) =>
-			client.id == editedClient.id ? editedClient : client
-		);
-		showEditClientForm.value = false;
+		try {
+			const editedClient = await updateClient(currentClient.value);
+			clients.value = clients.value.map((client) =>
+				client.id == editedClient.id ? editedClient : client
+			);
+			showEditClientForm.value = false;
+			toast.add({
+				severity: "success",
+				summary: "Successful",
+				detail: "Record edited.",
+				life: 2000,
+			});
+		} catch (error){
+			toast.add({
+				severity: "error",
+				summary: "Error",
+				detail: error,
+				life: 2000,
+			});
+		}
 	}
 };
 
 const removeClient = async (id) => {
-	await deleteClient(id);
-	clients.value = clients.value.filter((client) => client.id !== id); // Update local list
+	confirm.require({
+		message: "Are you sure you want to delete this record?",
+		header: "Delete",
+		icon: "pi pi-exclamation-circle",
+		rejectLabel: "Cancel",
+		rejectProps: {
+			label: "Cancel",
+			severity: "secondary",
+			outlined: true,
+		},
+		acceptProps: {
+			label: "Delete",
+			severity: "danger",
+		},
+		accept: async () => {
+			try {
+				await deleteClient(id);
+				clients.value = clients.value.filter(
+					(client) => client.id !== id
+				); // Update local list
+				toast.add({
+					severity: "info",
+					summary: "Successful",
+					detail: "Record deleted",
+					life: 2000,
+				});
+			} catch (error) {
+				toast.add({
+					severity: "error",
+					summary: "Error",
+					detail: error,
+					life: 2000,
+				});
+				}
+		},
+	});
 };
 
 onMounted(() => {
@@ -135,21 +220,14 @@ onMounted(() => {
 </script>
 <template>
 	<div id="page-wrapper" class="h-screen overflow-y-scroll flex flex-column">
+		<ConfirmDialog></ConfirmDialog>
+		<Toast />
 		<!-- Header -->
 		<header>
 			<CustomHeader active-page="clients" />
 		</header>
 		<main>
 			<div class="clients-table">
-				<div class="button-container">
-					<Button
-						pButton
-						label="Add New Client"
-						icon="pi pi-plus"
-						class="p-mb-3"
-						@click="showCreateClientForm = true"
-					></Button>
-				</div>
 				<DataTable
 					:value="clients"
 					:rows="5"
@@ -159,6 +237,22 @@ onMounted(() => {
 					striped-rows
 					:rowsPerPageOptions="[5, 10, 20]"
 				>
+					<template #header>
+						<div
+							class="flex flex-wrap items-center justify-content-between gap-2"
+						>
+							<span class="text-3xl font-bold">
+								Clients table
+							</span>
+							<Button
+								pButton
+								label="Add New Client"
+								icon="pi pi-plus"
+								class="p-mb-3"
+								@click="showCreateClientForm = true"
+							/>
+						</div>
+					</template>
 					<Column
 						field="id"
 						header="ID"
@@ -188,20 +282,20 @@ onMounted(() => {
 						<template #body="{ data }">
 							<Button
 								pButton
+								icon="pi pi-pencil"
+								rounded
+								variant="text"
+								title="Edit"
+								@click="editClientTrigger(data.id)"
+							></Button>
+							<Button
+								pButton
 								icon="pi pi-external-link"
 								rounded
 								variant="text"
 								title="Detailed view"
 								as="router-link"
 								:to="'/clients/' + data.id"
-							></Button>
-							<Button
-								pButton
-								icon="pi pi-pencil"
-								rounded
-								variant="text"
-								title="Edit"
-								@click="editClientTrigger(data.id)"
 							></Button>
 							<Button
 								pButton
