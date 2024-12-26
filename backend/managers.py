@@ -4,19 +4,20 @@ from db_cursor import select_records, insert_new_record, get_last_id, update_row
 table_name = "managers"
 
 
-def get_manager_from_DB(manager_id=None):
-    records = select_records(table_name, manager_id)
+def get_manager_from_DB(manager_id=None, where=None):
+    records = select_records(table_name, manager_id, where)
     result = []
-    for record in records:
-        record_dict = {
-            'id': record[0],
-            'name': record[1],
-            'surname': record[2],
-            'email': record[3],
-            'adminRights': bool(record[4]),
-            'password': record[5]
-        }
-        result.append(record_dict)
+    if records:
+        for record in records:
+            record_dict = {
+                'id': record[0],
+                'name': record[1],
+                'surname': record[2],
+                'email': record[3],
+                'adminRights': bool(record[4]),
+                'password': record[5]
+            }
+            result.append(record_dict)
     return result
 
 
@@ -31,6 +32,15 @@ def get_managers():
 @managers_bp.route('/managers/<int:manager_id>', methods=['GET'])
 def get_manager(manager_id):
     return jsonify(get_manager_from_DB(manager_id))
+
+
+def get_manager_id_by_email(email):
+    return get_manager_from_DB(where=f"email = '{email}'")[0]['id']
+
+
+@managers_bp.route('/managers/<int:manager_id>/rights', methods=['GET'])
+def get_manager_rights(manager_id):
+    return jsonify(get_manager_from_DB(manager_id)[0]['adminRights'])
 
 
 @managers_bp.route('/managers', methods=['POST'])
@@ -60,10 +70,10 @@ def update_manager(manager_id):
         return jsonify({"error": "manager not found"}), 404
     if password_bool:
         update_row_in_table(table_name, manager_id, {"name": manager_data["name"],
-                                                 "surname": manager_data["surname"],
-                                                 "email": manager_data["email"],
-                                                 "adminRights": manager_data["adminRights"],
-                                                 "password": manager_data["password"]})
+                                                     "surname": manager_data["surname"],
+                                                     "email": manager_data["email"],
+                                                     "adminRights": manager_data["adminRights"],
+                                                     "password": manager_data["password"]})
     else:
         update_row_in_table(table_name, manager_id, {"name": manager_data["name"],
                                                      "surname": manager_data["surname"],

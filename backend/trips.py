@@ -6,14 +6,15 @@ table_name = "trips"
 def get_trip_from_DB(trip_id=None):
     records = select_records(table_name, trip_id)
     result = []
-    for record in records:
-        record_dict = {
-            'id': record[0],
-            'name': record[1],
-            'idplace': record[2],
-            'season': record[3]
-        }
-        result.append(record_dict)
+    if records:
+        for record in records:
+            record_dict = {
+                'id': record[0],
+                'name': record[1],
+                'idplace': record[2],
+                'season': record[3]
+            }
+            result.append(record_dict)
     return result
 
 
