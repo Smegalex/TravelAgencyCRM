@@ -6,9 +6,10 @@ const fetchBookings_by_ClientID = async (client_id) => {
 		return await response.json();
 	} catch (error) {
 		console.error(
-			`Error fetching client bookings (id: ${client_id}):`,
+			`Error fetching client's bookings (client_id: ${client_id}):`,
 			error
 		);
+		throw new Error(`Error fetching client's bookings.`);
 	}
 };
 
@@ -24,6 +25,7 @@ const addBooking = async (booking) => {
 		return await response.json();
 	} catch (error) {
 		console.error("Error adding booking:", error);
+		throw new Error("Error adding booking.");
 	}
 };
 
@@ -39,7 +41,8 @@ const updateBooking = async (booking) => {
 		});
 		return (await response.json())[0];
 	} catch (error) {
-		console.error(`Error updating booking (id: ${booking['id']}):`, error);
+		console.error(`Error updating booking (id: ${booking["id"]}):`, error);
+		throw new Error(`Error updating booking (id: ${booking["id"]}).`);
 	}
 };
 
@@ -50,7 +53,8 @@ const deleteBooking = async (id) => {
 		});
 	} catch (error) {
 		console.error(`Error deleting booking (id: ${id}):`, error);
+		throw new Error(`Error deleting booking (id: ${id}).`);
 	}
 };
 
-export { fetchBookings_by_ClientID, addBooking, updateBooking, deleteBooking};
+export { fetchBookings_by_ClientID, addBooking, updateBooking, deleteBooking };

@@ -4,6 +4,7 @@ const fetchClients = async () => {
 		return await response.json();
 	} catch (error) {
 		console.error("Error fetching clients:", error);
+		throw new Error(`Error retrieving clients' data.`);
 	}
 };
 
@@ -13,6 +14,7 @@ const fetchClient = async (id) => {
 		return (await response.json())[0];
 	} catch (error) {
 		console.error(`Error fetching client (id: ${id}):`, error);
+		throw new Error(`Error retrieving client data (id: ${id}).`);
 	}
 };
 
@@ -28,6 +30,7 @@ const addClient = async (client) => {
 		return await response.json();
 	} catch (error) {
 		console.error("Error adding client:", error);
+		throw new Error("Error adding a new client.");
 	}
 };
 
@@ -43,7 +46,8 @@ const updateClient = async (client) => {
 		});
 		return (await response.json())[0];
 	} catch (error) {
-		console.error(`Error updating client (id: ${client['id']}):`, error);
+		console.error(`Error updating client (id: ${client["id"]}):`, error);
+		throw new Error(`Error updating client (id: ${client["id"]}).`);
 	}
 };
 
@@ -54,6 +58,7 @@ const deleteClient = async (id) => {
 		});
 	} catch (error) {
 		console.error(`Error deleting client (id: ${id}):`, error);
+		throw new Error(`Error deleting client (id: ${id}).`);
 	}
 };
 export { fetchClients, fetchClient, addClient, updateClient, deleteClient };
