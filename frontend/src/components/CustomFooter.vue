@@ -1,5 +1,5 @@
 <template>
-	<footer class="bg-dark text-center text-light p-3">
+	<footer class="surface-900 text-center text-light p-3">
 		<p>&copy; 2024 Tunik & Shvets co.</p>
 		<div class="footer-icons">
 			<a href="tel:+123456789" class="mr-3"

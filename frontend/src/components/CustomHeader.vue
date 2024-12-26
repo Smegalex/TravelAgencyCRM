@@ -1,5 +1,8 @@
 <script setup>
+import { useMainStore } from '@/stores/mainStore';
+import { RouterLink } from 'vue-router';
 
+const store = useMainStore();
 
 const { activePage = null } = defineProps({
 	activePage: {
@@ -7,11 +10,13 @@ const { activePage = null } = defineProps({
 		required: false,
 	},
 });
+console.log(store)
 
 </script>
 
 <template>
-	<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-5">
+	<Menubar :model="items"/>
+	<nav class="navbar navbar-expand-lg navbar-dark surface-900 px-5">
 		<a class="navbar-brand" href="#">
 			<img src="../img/Logo2.png" alt="travel logo" class="brand-logo" />
 		</a>
@@ -32,51 +37,54 @@ const { activePage = null } = defineProps({
 					class="nav-item"
 					:class="activePage === 'home' ? 'active' : ''"
 				>
-					<a
+					<RouterLink
 						class="nav-link"
-						:href="activePage === 'home' ? '#' : '/'"
-						>Home</a
+						:to="activePage === 'home' ? '#' : '/'"
+						>Home</RouterLink
 					>
 				</li>
-				
-				<li class="nav-item">
-				<a class="nav-link" :href="activePage === 'login' ? '#' : '/login'">
-					Login
-				</a>
+
+				<li class="nav-item" v-if="!store.getUsername">
+					<RouterLink
+						class="nav-link"
+						:to="activePage === 'login' ? '#' : '/login'"
+					>
+						Login
+					</RouterLink>
 				</li>
 				<li
 					class="nav-item"
 					:class="activePage === 'clients' ? 'active' : ''"
+					v-if="store.getUsername"
 				>
-					<a
+					<RouterLink
 						class="nav-link"
-						:href="activePage === 'clients' ? '#' : '/clients'"
-						>Clients</a
+						:to="activePage === 'clients' ? '#' : '/clients'"
+						>Clients</RouterLink
 					>
 				</li>
 				<li
 					class="nav-item"
 					:class="activePage === 'trips' ? 'active' : ''"
+					v-if="store.getUsername"
 				>
-					<a
+					<RouterLink
 						class="nav-link"
-						:href="activePage === 'trips' ? '#' : '/trips'"
-						>Trips</a
-					>
+						:to="activePage === 'trips' ? '#' : '/trips'"
+						>Trips</RouterLink>
 				</li>
 				<li
 					class="nav-item"
 					:class="activePage === 'managers' ? 'active' : ''"
+					v-if="store.getRights"
 				>
-					<a
+					<RouterLink
 						class="nav-link"
-						:href="activePage === 'managers' ? '#' : '/managers'"
-						>Managers</a
+						:to="activePage === 'managers' ? '#' : '/managers'"
+						>Managers</RouterLink
 					>
 				</li>
 			</ul>
 		</div>
 	</nav>
 </template>
-
-
