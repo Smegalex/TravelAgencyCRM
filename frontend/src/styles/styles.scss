@@ -27,7 +27,7 @@ a {
 }
 
 a:hover {
-	color: #f0ffe0;
+	color: var(--primary-100);
 }
 
 body {
@@ -36,9 +36,9 @@ body {
 	min-height: 100vh;
 }
 
-.page-wrapper {
+#page-wrapper {
 	min-height: 100vh;
-	background-color: var(--primary-color);
+	// background-color: var(--primary-color);
 	display: flex;
 	flex-direction: column;
 }

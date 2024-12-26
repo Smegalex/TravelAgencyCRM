@@ -162,68 +162,11 @@
 
 		<!-- Footer -->
 		<footer>
-	<CustomFooter active-page="home" />
+			<CustomFooter active-page="home" />
 		</footer>
-	</div>
-
-	<!-- Модальні вікна -->
-
-	<!-- Ваш компонент модального вікна -->
-
-	<!-- Модальне вікно FAQ -->
-	<div
-		class="modal fade"
-		id="faqModal"
-		tabindex="-1"
-		role="dialog"
-		aria-labelledby="faqModalTitle"
-		aria-hidden="true"
-	>
-		<div class="modal-dialog" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="faqModalTitle">FAQ</h5>
-					<button
-						type="button"
-						class="close"
-						data-dismiss="modal"
-						aria-label="Close"
-					>
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body">
-					<p><strong>1. Як користуватися CRM?</strong></p>
-					<p>
-						Наша CRM розроблена для зручності управління клієнтами,
-						бронюванням та аналітикою в реальному часі.
-					</p>
-					<p><strong>2. Чи є підтримка клієнтів?</strong></p>
-					<p>
-						Так, наша підтримка клієнтів доступна 24/7 через телефон
-						або електронну пошту.
-					</p>
-				</div>
-			</div>
-		</div>
 	</div>
 </template>
 <script>
-import { ref } from "vue";
-import CustomHeader from "@/components/CustomHeader.vue";
-import CustomFooter from "@/components/CustomFooter.vue";
-import AuthorizationModal from "@/components/AuthorizationModal.vue";
 
-export default {
-  components: {
-    CustomHeader,
-    CustomFooter,
-    AuthorizationModal,
-  },
-  setup() {
-    const showAuthorizationModal = ref(false); // Керування видимістю модального вікна
 
-    return { showAuthorizationModal };
-  },
-};
 </script>
